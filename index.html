@@ -551,6 +551,7 @@
         <div class="modalActions">
           <button class="iconBtn" id="prevBtn" type="button" title="Previous">◀</button>
           <button class="iconBtn" id="nextBtn" type="button" title="Next">▶</button>
+          <button class="iconBtn" id="deleteBtn" type="button" title="Delete">Delete</button>
           <button class="iconBtn" id="closeBtn" type="button" title="Close">Close</button>
         </div>
       </div>
@@ -610,6 +611,8 @@
     const prevBtn = byId('prevBtn');
     /** @type {HTMLButtonElement} */
     const nextBtn = byId('nextBtn');
+    /** @type {HTMLButtonElement} */
+    const deleteBtn = byId('deleteBtn');
 
     const IMAGE_TYPES = new Set([
       'image/jpeg','image/png','image/webp','image/gif','image/bmp','image/svg+xml','image/heic','image/heif'
@@ -618,7 +621,7 @@
       'video/mp4','video/webm','video/ogg','video/quicktime'
     ]);
 
-    /** @type {{file: File, url: string, kind: 'image'|'video', name: string, relPath: string}[]} */
+    /** @type {{id: string, url: string, kind: 'image'|'video', name: string, relPath: string, lastModified: number, size: number}[]} */
     let items = [];
     /** @type {number} */
     let activeIndex = -1;
@@ -687,6 +690,46 @@
       folderPill.textContent = total > 0 ? `Uploads: ${total}` : 'Uploads: none';
     }
 
+    /**
+     * @returns {Promise<void>}
+     */
+    async function loadFromServer(){
+      try{
+        const res = await fetch('/api/media');
+        if (res.status === 401){
+          location.href = '/login';
+          return;
+        }
+        if (!res.ok) return;
+        const data = await res.json();
+        const serverItems = Array.isArray(data?.items) ? data.items : [];
+
+        /** @type {typeof items} */
+        const next = [];
+        for (const it of serverItems){
+          const id = typeof it?.id === 'string' ? it.id : null;
+          const url = typeof it?.url === 'string' ? it.url : null;
+          const name = typeof it?.name === 'string' ? it.name : null;
+          const relPath = typeof it?.name === 'string' ? it.name : null;
+          const kind = it?.kind === 'image' || it?.kind === 'video' ? it.kind : null;
+          const size = Number.isFinite(it?.size) ? it.size : 0;
+          const lastModified = Number.isFinite(it?.lastModified) ? it.lastModified : Date.now();
+          if (!id || !url || !name || !relPath || !kind) continue;
+          next.push({ id, url, name, relPath, kind, size, lastModified });
+        }
+
+        items = next;
+        // Keep stable ordering
+        items.sort((a,b) => b.lastModified - a.lastModified);
+
+        setUploadsLabel(items.length);
+        countPill.textContent = `${items.length} items`;
+        applyFilters();
+      }catch(err){
+        console.warn('Failed to load from server', err);
+      }
+    }
+
     function applyFilters(){
       const q = normalizeName(searchInput.value.trim());
       const tf = typeFilterValue;
@@ -697,7 +740,7 @@
           kind: it.kind,
           name: it.name,
           relPath: it.relPath,
-          dateKey: dateKeyFromMs(it.file.lastModified)
+          dateKey: dateKeyFromMs(it.lastModified)
         }))
         .filter(it => {
           if (tf !== 'all' && it.kind !== tf) return false;
@@ -873,6 +916,7 @@
     function updateNavState(){
       prevBtn.disabled = items.length <= 1;
       nextBtn.disabled = items.length <= 1;
+      deleteBtn.disabled = activeIndex < 0 || activeIndex >= items.length;
     }
 
     function closeModal(){
@@ -941,28 +985,28 @@
         return;
       }
 
-      /** @type {Set<string>} */
-      const existing = new Set(items.map(it => `${it.file.name}|${it.file.size}|${it.file.lastModified}`));
+      const form = new FormData();
 
       for (const f of files){
         const kind = inferKind(f);
         if (!kind) continue;
 
-        const key = `${f.name}|${f.size}|${f.lastModified}`;
-        if (existing.has(key)) continue;
-        existing.add(key);
-
+        // optimistic preview
         items.push({
-          file: f,
+          id: '',
           url: URL.createObjectURL(f),
           kind,
           name: f.name,
-          relPath: f.name
+          relPath: f.name,
+          lastModified: f.lastModified,
+          size: f.size
         });
+
+        form.append('files', f, f.name);
       }
 
       // Keep stable ordering
-      items.sort((a,b) => a.name.localeCompare(b.name, 'en'));
+      items.sort((a,b) => b.lastModified - a.lastModified);
 
       setUploadsLabel(items.length);
       countPill.textContent = `${items.length} items`;
@@ -971,6 +1015,40 @@
       folderInput.value = '';
 
       applyFilters();
+
+      // real upload + refresh from db
+      (async () => {
+        try{
+          const res = await fetch('/api/upload', { method: 'POST', body: form });
+          if (!res.ok){
+            console.warn('Upload failed', res.status);
+            return;
+          }
+          await loadFromServer();
+        }catch(err){
+          console.warn('Upload failed', err);
+        }
+      })();
+    });
+
+    deleteBtn.addEventListener('click', () => {
+      if (activeIndex < 0 || activeIndex >= items.length) return;
+      const it = items[activeIndex];
+      if (!it.id) return;
+
+      (async () => {
+        try{
+          const res = await fetch(`/api/media/${encodeURIComponent(it.id)}`, { method: 'DELETE' });
+          if (!res.ok){
+            console.warn('Delete failed', res.status);
+            return;
+          }
+          closeModal();
+          await loadFromServer();
+        }catch(err){
+          console.warn('Delete failed', err);
+        }
+      })();
     });
 
     searchInput.addEventListener('input', applyFilters);
@@ -1002,6 +1080,7 @@
     });
 
     setTypeFilter('all');
+    loadFromServer();
   </script>
 </body>
 </html>
