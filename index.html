@@ -492,36 +492,17 @@
           </div>
 
           <div class="navStatus" id="statusRow">
-            <span class="pill" id="folderPill">Uploads: none</span>
-            <span class="pill" id="countPill">0 items</span>
+            <span class="pill" id="folderPill">Notes: 0</span>
+            <span class="pill" id="countPill">0 notes</span>
           </div>
         </div>
 
         <div class="navRight">
-          <button class="btn primary" id="pickFolderBtn" type="button">Upload</button>
-          <input class="sr-only" id="folderInput" type="file" multiple accept="image/*,video/*" />
+          <button class="btn primary" id="pickFolderBtn" type="button">New Note</button>
 
-          <div class="field" title="Search by filename">
+          <div class="field" title="Search notes">
             <span style="color:var(--muted); font-size:12px">Search</span>
-            <input id="searchInput" placeholder="e.g. 2024, vacation, IMG_" />
-          </div>
-
-          <div class="dd" id="typeFilter" aria-label="Type filter">
-            <button class="ddBtn" id="typeFilterBtn" type="button" aria-haspopup="listbox" aria-expanded="false">All</button>
-            <div class="ddMenu" id="typeFilterMenu" role="listbox" aria-label="Type filter options">
-              <button class="ddItem" type="button" role="option" data-value="all" aria-selected="true">
-                <span>All</span>
-                <span class="ddHint">Photos + videos</span>
-              </button>
-              <button class="ddItem" type="button" role="option" data-value="image" aria-selected="false">
-                <span>Images</span>
-                <span class="ddHint">Photos</span>
-              </button>
-              <button class="ddItem" type="button" role="option" data-value="video" aria-selected="false">
-                <span>Videos</span>
-                <span class="ddHint">Clips</span>
-              </button>
-            </div>
+            <input id="searchInput" placeholder="Search by title or content" />
           </div>
 
           <button class="btn" id="clearBtn" type="button">Clear</button>
@@ -534,14 +515,14 @@
     <div class="wrap">
       <div id="emptyState" class="empty">
         <h2>No items</h2>
-        <p>Upload photos or videos to view them here.</p>
+        <p>Create your first note.</p>
       </div>
 
       <div id="grid" class="days" aria-live="polite"></div>
     </div>
   </main>
 
-  <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-label="Media viewer">
+  <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-label="Note">
     <div class="modal">
       <div class="modalHead">
         <div class="modalTitle">
@@ -549,13 +530,21 @@
           <div class="path" id="modalPath">-</div>
         </div>
         <div class="modalActions">
-          <button class="iconBtn" id="prevBtn" type="button" title="Previous">◀</button>
-          <button class="iconBtn" id="nextBtn" type="button" title="Next">▶</button>
           <button class="iconBtn" id="deleteBtn" type="button" title="Delete">Delete</button>
+          <button class="iconBtn" id="saveBtn" type="button" title="Save">Save</button>
           <button class="iconBtn" id="closeBtn" type="button" title="Close">Close</button>
         </div>
       </div>
-      <div class="viewer" id="viewer"></div>
+      <div class="viewer" id="viewer">
+        <div class="field" style="margin-top:6px">
+          <span style="color:var(--muted); font-size:12px">Title</span>
+          <input id="noteTitle" placeholder="Note title" />
+        </div>
+        <div class="field" style="margin-top:10px">
+          <span style="color:var(--muted); font-size:12px">Note</span>
+          <textarea id="noteBody" style="width:100%; resize:vertical; min-height:180px; background:transparent; border:0; color:var(--text); font:inherit; padding:8px 0 0; outline:none" placeholder="Write your note..."></textarea>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -575,20 +564,12 @@
 
     /** @type {HTMLButtonElement} */
     const pickFolderBtn = byId('pickFolderBtn');
-    /** @type {HTMLInputElement} */
-    const folderInput = byId('folderInput');
     /** @type {HTMLDivElement} */
     const grid = byId('grid');
     /** @type {HTMLDivElement} */
     const emptyState = byId('emptyState');
     /** @type {HTMLInputElement} */
     const searchInput = byId('searchInput');
-    /** @type {HTMLDivElement} */
-    const typeFilter = byId('typeFilter');
-    /** @type {HTMLButtonElement} */
-    const typeFilterBtn = byId('typeFilterBtn');
-    /** @type {HTMLDivElement} */
-    const typeFilterMenu = byId('typeFilterMenu');
     /** @type {HTMLButtonElement} */
     const clearBtn = byId('clearBtn');
 
@@ -608,45 +589,28 @@
     /** @type {HTMLButtonElement} */
     const closeBtn = byId('closeBtn');
     /** @type {HTMLButtonElement} */
-    const prevBtn = byId('prevBtn');
-    /** @type {HTMLButtonElement} */
-    const nextBtn = byId('nextBtn');
-    /** @type {HTMLButtonElement} */
     const deleteBtn = byId('deleteBtn');
+    /** @type {HTMLButtonElement} */
+    const saveBtn = byId('saveBtn');
 
-    const IMAGE_TYPES = new Set([
-      'image/jpeg','image/png','image/webp','image/gif','image/bmp','image/svg+xml','image/heic','image/heif'
-    ]);
-    const VIDEO_TYPES = new Set([
-      'video/mp4','video/webm','video/ogg','video/quicktime'
-    ]);
+    /** @type {HTMLInputElement} */
+    const noteTitle = byId('noteTitle');
+    /** @type {HTMLTextAreaElement} */
+    const noteBody = byId('noteBody');
 
-    /** @type {{id: string, url: string, kind: 'image'|'video', name: string, relPath: string, lastModified: number, size: number}[]} */
+    /** @type {{id: string, title: string, body: string, createdAt: string, updatedAt: string}[]} */
     let items = [];
     /** @type {number} */
     let activeIndex = -1;
-    /** @type {{idx:number, kind:'image'|'video', name:string, relPath:string, dateKey:string}[]} */
+    /** @type {{idx:number, title:string, body:string, dateKey:string}[]} */
     let currentView = [];
     /** @type {number} */
     let activeViewPos = -1;
-    /** @type {'all'|'image'|'video'} */
-    let typeFilterValue = 'all';
+    /** @type {'view'|'create'} */
+    let modalMode = 'view';
 
     function normalizeName(n){
       return (n || '').toLowerCase();
-    }
-
-    /**
-     * @param {File} file
-     * @returns {'image'|'video'|null}
-     */
-    function inferKind(file){
-      if (IMAGE_TYPES.has(file.type)) return 'image';
-      if (VIDEO_TYPES.has(file.type)) return 'video';
-      const ext = (file.name.split('.').pop() || '').toLowerCase();
-      if (['jpg','jpeg','png','webp','gif','bmp','svg','heic','heif'].includes(ext)) return 'image';
-      if (['mp4','webm','ogg','mov'].includes(ext)) return 'video';
-      return null;
     }
 
     function dateKeyFromMs(ms){
@@ -657,29 +621,16 @@
       return `${y}-${m}-${day}`;
     }
 
-    /**
-     * @param {File} file
-     * @returns {string}
-     */
-    function getRelPath(file){
-      return file.webkitRelativePath || file.name;
-    }
-
     function clearAll(){
-      // Revoke old blob urls
-      for (const it of items){
-        try{ URL.revokeObjectURL(it.url); }catch(e){}
-      }
       items = [];
       activeIndex = -1;
       currentView = [];
       activeViewPos = -1;
       grid.innerHTML = '';
       emptyState.style.display = '';
-      countPill.textContent = '0 items';
-      folderPill.textContent = 'Uploads: none';
+      countPill.textContent = '0 notes';
+      folderPill.textContent = 'Notes: 0';
       searchInput.value = '';
-      setTypeFilter('all');
       closeModal();
     }
 
@@ -687,7 +638,7 @@
      * @param {number} total
      */
     function setUploadsLabel(total){
-      folderPill.textContent = total > 0 ? `Uploads: ${total}` : 'Uploads: none';
+      folderPill.textContent = `Notes: ${total}`;
     }
 
     /**
@@ -695,7 +646,7 @@
      */
     async function loadFromServer(){
       try{
-        const res = await fetch('/api/media');
+        const res = await fetch('/api/notes');
         if (res.status === 401){
           location.href = '/login';
           return;
@@ -708,22 +659,20 @@
         const next = [];
         for (const it of serverItems){
           const id = typeof it?.id === 'string' ? it.id : null;
-          const url = typeof it?.url === 'string' ? it.url : null;
-          const name = typeof it?.name === 'string' ? it.name : null;
-          const relPath = typeof it?.name === 'string' ? it.name : null;
-          const kind = it?.kind === 'image' || it?.kind === 'video' ? it.kind : null;
-          const size = Number.isFinite(it?.size) ? it.size : 0;
-          const lastModified = Number.isFinite(it?.lastModified) ? it.lastModified : Date.now();
-          if (!id || !url || !name || !relPath || !kind) continue;
-          next.push({ id, url, name, relPath, kind, size, lastModified });
+          const title = typeof it?.title === 'string' ? it.title : null;
+          const body = typeof it?.body === 'string' ? it.body : '';
+          const createdAt = typeof it?.createdAt === 'string' ? it.createdAt : null;
+          const updatedAt = typeof it?.updatedAt === 'string' ? it.updatedAt : (createdAt || new Date().toISOString());
+          if (!id || !title || !createdAt) continue;
+          next.push({ id, title, body, createdAt, updatedAt });
         }
 
         items = next;
         // Keep stable ordering
-        items.sort((a,b) => b.lastModified - a.lastModified);
+        items.sort((a,b) => b.createdAt.localeCompare(a.createdAt));
 
         setUploadsLabel(items.length);
-        countPill.textContent = `${items.length} items`;
+        countPill.textContent = `${items.length} notes`;
         applyFilters();
       }catch(err){
         console.warn('Failed to load from server', err);
@@ -732,24 +681,21 @@
 
     function applyFilters(){
       const q = normalizeName(searchInput.value.trim());
-      const tf = typeFilterValue;
 
       currentView = items
         .map((it, idx) => ({
           idx,
-          kind: it.kind,
-          name: it.name,
-          relPath: it.relPath,
-          dateKey: dateKeyFromMs(it.lastModified)
+          title: it.title,
+          body: it.body,
+          dateKey: dateKeyFromMs(Date.parse(it.createdAt))
         }))
         .filter(it => {
-          if (tf !== 'all' && it.kind !== tf) return false;
           if (!q) return true;
-          return normalizeName(it.name).includes(q) || normalizeName(it.relPath).includes(q);
+          return normalizeName(it.title).includes(q) || normalizeName(it.body).includes(q);
         });
 
       renderGrouped(currentView);
-      countPill.textContent = `${currentView.length} items`;
+      countPill.textContent = `${currentView.length} notes`;
 
       if (currentView.length === 0){
         emptyState.style.display = '';
@@ -765,32 +711,21 @@
         card.className = 'card';
         card.tabIndex = 0;
         card.setAttribute('role','button');
-        card.setAttribute('aria-label', `${it.kind === 'image' ? 'Image' : 'Video'}: ${it.name}`);
+        card.setAttribute('aria-label', `Note: ${it.title}`);
 
-        const src = items[it.idx].url;
+        const title = document.createElement('div');
+        title.style.fontWeight = '800';
+        title.style.marginBottom = '6px';
+        title.textContent = it.title;
 
-        let mediaEl;
-        if (it.kind === 'image'){
-          mediaEl = document.createElement('img');
-          mediaEl.loading = 'lazy';
-          mediaEl.decoding = 'async';
-          mediaEl.src = src;
-          mediaEl.alt = it.name;
-        } else {
-          mediaEl = document.createElement('video');
-          mediaEl.src = src;
-          mediaEl.preload = 'metadata';
-          mediaEl.muted = true;
-          mediaEl.playsInline = true;
-        }
-        mediaEl.className = 'thumb';
+        const body = document.createElement('div');
+        body.style.color = 'var(--muted)';
+        body.style.fontSize = '12px';
+        body.style.lineHeight = '1.55';
+        body.textContent = (it.body || '').slice(0, 220);
 
-        const tag = document.createElement('div');
-        tag.className = `tag ${it.kind} tagOverlay`;
-        tag.textContent = it.kind === 'image' ? 'img' : 'vid';
-
-        card.appendChild(mediaEl);
-        card.appendChild(tag);
+        card.appendChild(title);
+        card.appendChild(body);
 
         const open = () => {
           const pos = currentView.findIndex(v => v.idx === it.idx);
@@ -817,11 +752,10 @@
       for (const it of view){
         let bucket = byDate.get(it.dateKey);
         if (!bucket){
-          bucket = { images: [], videos: [] };
+          bucket = { notes: [] };
           byDate.set(it.dateKey, bucket);
         }
-        if (it.kind === 'image') bucket.images.push(it);
-        else bucket.videos.push(it);
+        bucket.notes.push(it);
       }
 
       const dateKeys = Array.from(byDate.keys()).sort((a,b) => b.localeCompare(a));
@@ -841,35 +775,17 @@
 
         const counts = document.createElement('div');
         counts.className = 'counts';
-        const imgCount = b.images.length;
-        const vidCount = b.videos.length;
-        counts.textContent = `${imgCount} photos • ${vidCount} videos`;
+        const nCount = b.notes.length;
+        counts.textContent = `${nCount} notes`;
 
         head.appendChild(dateEl);
         head.appendChild(counts);
         sec.appendChild(head);
 
-        if (b.images.length){
-          const sh = document.createElement('div');
-          sh.className = 'subHead';
-          sh.textContent = 'Images';
-          sec.appendChild(sh);
-
+        if (b.notes.length){
           const sg = document.createElement('div');
           sg.className = 'subGrid';
-          renderCards(sg, b.images);
-          sec.appendChild(sg);
-        }
-
-        if (b.videos.length){
-          const sh = document.createElement('div');
-          sh.className = 'subHead';
-          sh.textContent = 'Videos';
-          sec.appendChild(sh);
-
-          const sg = document.createElement('div');
-          sg.className = 'subGrid';
-          renderCards(sg, b.videos);
+          renderCards(sg, b.notes);
           sec.appendChild(sg);
         }
 
@@ -888,25 +804,11 @@
       activeIndex = idx;
       const it = items[idx];
 
-      // Clear viewer
-      viewer.innerHTML = '';
-
-      modalFile.textContent = it.name;
-      modalPath.textContent = it.relPath;
-
-      if (it.kind === 'image'){
-        const img = document.createElement('img');
-        img.src = it.url;
-        img.alt = it.name;
-        viewer.appendChild(img);
-      } else {
-        const v = document.createElement('video');
-        v.src = it.url;
-        v.controls = true;
-        v.autoplay = true;
-        v.playsInline = true;
-        viewer.appendChild(v);
-      }
+      modalMode = 'view';
+      modalFile.textContent = it.title;
+      modalPath.textContent = new Date(it.createdAt).toLocaleString();
+      noteTitle.value = it.title;
+      noteBody.value = it.body || '';
 
       overlay.classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -914,121 +816,32 @@
     }
 
     function updateNavState(){
-      prevBtn.disabled = items.length <= 1;
-      nextBtn.disabled = items.length <= 1;
       deleteBtn.disabled = activeIndex < 0 || activeIndex >= items.length;
+      saveBtn.disabled = modalMode !== 'create';
     }
 
     function closeModal(){
       overlay.classList.remove('open');
       document.body.style.overflow = '';
-      // Stop video playback if any
-      const v = viewer.querySelector('video');
-      if (v){
-        try{ v.pause(); }catch(e){}
-      }
-      viewer.innerHTML = '';
       activeIndex = -1;
       activeViewPos = -1;
+      modalMode = 'view';
+      noteTitle.value = '';
+      noteBody.value = '';
     }
 
-    function step(delta){
-      if (!currentView || currentView.length === 0) return;
-      if (activeViewPos < 0) return;
-      let n = activeViewPos + delta;
-      if (n < 0) n = currentView.length - 1;
-      if (n >= currentView.length) n = 0;
-      openModalByViewPos(n);
-    }
-
-    pickFolderBtn.addEventListener('click', () => folderInput.click());
-
-    function setTypeFilter(v){
-      typeFilterValue = v;
-      typeFilterBtn.textContent = v === 'all' ? 'All' : (v === 'image' ? 'Images' : 'Videos');
-      for (const el of typeFilterMenu.querySelectorAll('.ddItem')){
-        const selected = el.getAttribute('data-value') === v;
-        el.setAttribute('aria-selected', selected ? 'true' : 'false');
-      }
-    }
-
-    function closeTypeMenu(){
-      typeFilter.classList.remove('open');
-      typeFilterBtn.setAttribute('aria-expanded', 'false');
-    }
-
-    function toggleTypeMenu(){
-      const willOpen = !typeFilter.classList.contains('open');
-      if (willOpen){
-        typeFilter.classList.add('open');
-        typeFilterBtn.setAttribute('aria-expanded', 'true');
-      } else {
-        closeTypeMenu();
-      }
-    }
-
-    typeFilterBtn.addEventListener('click', toggleTypeMenu);
-    typeFilterMenu.addEventListener('click', (e) => {
-      const t = e.target instanceof HTMLElement ? e.target : null;
-      const btn = t ? t.closest('.ddItem') : null;
-      if (!btn) return;
-      const v = btn.getAttribute('data-value');
-      if (v !== 'all' && v !== 'image' && v !== 'video') return;
-      setTypeFilter(v);
-      closeTypeMenu();
-      applyFilters();
-    });
-
-    folderInput.addEventListener('change', () => {
-      const files = Array.from(folderInput.files || []);
-      if (files.length === 0){
-        return;
-      }
-
-      const form = new FormData();
-
-      for (const f of files){
-        const kind = inferKind(f);
-        if (!kind) continue;
-
-        // optimistic preview
-        items.push({
-          id: '',
-          url: URL.createObjectURL(f),
-          kind,
-          name: f.name,
-          relPath: f.name,
-          lastModified: f.lastModified,
-          size: f.size
-        });
-
-        form.append('files', f, f.name);
-      }
-
-      // Keep stable ordering
-      items.sort((a,b) => b.lastModified - a.lastModified);
-
-      setUploadsLabel(items.length);
-      countPill.textContent = `${items.length} items`;
-
-      // Allow selecting same file again later if needed
-      folderInput.value = '';
-
-      applyFilters();
-
-      // real upload + refresh from db
-      (async () => {
-        try{
-          const res = await fetch('/api/upload', { method: 'POST', body: form });
-          if (!res.ok){
-            console.warn('Upload failed', res.status);
-            return;
-          }
-          await loadFromServer();
-        }catch(err){
-          console.warn('Upload failed', err);
-        }
-      })();
+    pickFolderBtn.addEventListener('click', () => {
+      modalMode = 'create';
+      activeIndex = -1;
+      activeViewPos = -1;
+      modalFile.textContent = 'New note';
+      modalPath.textContent = '';
+      noteTitle.value = '';
+      noteBody.value = '';
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      updateNavState();
+      noteTitle.focus();
     });
 
     deleteBtn.addEventListener('click', () => {
@@ -1038,7 +851,9 @@
 
       (async () => {
         try{
-          const res = await fetch(`/api/media/${encodeURIComponent(it.id)}`, { method: 'DELETE' });
+          const ok = confirm('Delete this note?');
+          if (!ok) return;
+          const res = await fetch(`/api/notes/${encodeURIComponent(it.id)}`, { method: 'DELETE' });
           if (!res.ok){
             console.warn('Delete failed', res.status);
             return;
@@ -1047,6 +862,35 @@
           await loadFromServer();
         }catch(err){
           console.warn('Delete failed', err);
+        }
+      })();
+    });
+
+    saveBtn.addEventListener('click', () => {
+      if (modalMode !== 'create') return;
+      const title = noteTitle.value.trim();
+      const body = noteBody.value;
+      if (!title) return;
+
+      (async () => {
+        try{
+          const res = await fetch('/api/notes', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ title, body })
+          });
+          if (res.status === 401){
+            location.href = '/login';
+            return;
+          }
+          if (!res.ok){
+            console.warn('Save failed', res.status);
+            return;
+          }
+          closeModal();
+          await loadFromServer();
+        }catch(err){
+          console.warn('Save failed', err);
         }
       })();
     });
@@ -1060,26 +904,15 @@
       if (e.target === overlay) closeModal();
     });
 
-    prevBtn.addEventListener('click', () => step(-1));
-    nextBtn.addEventListener('click', () => step(+1));
-
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeTypeMenu();
       if (!overlay.classList.contains('open')) return;
       if (e.key === 'Escape') closeModal();
-      if (e.key === 'ArrowLeft') step(-1);
-      if (e.key === 'ArrowRight') step(+1);
     });
 
     document.addEventListener('click', (e) => {
-      if (!typeFilter.classList.contains('open')) return;
-      const target = e.target instanceof Node ? e.target : null;
-      if (!target) return;
-      if (typeFilter.contains(target)) return;
-      closeTypeMenu();
+      return;
     });
 
-    setTypeFilter('all');
     loadFromServer();
   </script>
 </body>
