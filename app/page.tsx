@@ -164,9 +164,16 @@ export default function HomePage() {
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [apiError, setApiError] = useState<string>('');
+  const [successMsg, setSuccessMsg] = useState<string>('');
   const [showCreatedFull, setShowCreatedFull] = useState(false);
   const [showUpdatedFull, setShowUpdatedFull] = useState(false);
   const emojiPickerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!successMsg) return;
+    const t = window.setTimeout(() => setSuccessMsg(''), 2400);
+    return () => window.clearTimeout(t);
+  }, [successMsg]);
 
   const colorOptions = useMemo(
     () => ['#6ea8ff', '#9d7bff', '#ff4fd8', '#22c55e', '#f59e0b', '#ef4444', '#14b8a6', '#ffffff'],
@@ -242,13 +249,17 @@ export default function HomePage() {
       const res = await fetch(`/api/notes/${encodeURIComponent(active.id)}`, {
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ emoji, color })
+        body: JSON.stringify({ title: title.trim(), body, emoji, color })
       });
       if (res.status === 401) {
         window.location.href = '/login';
         return;
       }
-      if (!res.ok) return;
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        setApiError(`PATCH /api/notes/${active.id} failed (${res.status}) ${text}`);
+        return;
+      }
       const data = await res.json().catch(() => null);
       const updated = data?.item as NoteItem | undefined;
       if (updated?.id) {
@@ -258,6 +269,9 @@ export default function HomePage() {
         await load();
       }
       setEmojiOpen(false);
+      setApiError('');
+      setOpen(false);
+      setSuccessMsg('Updated successfully.');
     } finally {
       setBusy(false);
     }
@@ -355,6 +369,7 @@ export default function HomePage() {
       }
       setOpen(false);
       setApiError('');
+      setSuccessMsg('Saved successfully.');
       await load();
     } finally {
       setBusy(false);
@@ -403,6 +418,7 @@ export default function HomePage() {
               </button>
             </div>
           </div>
+          {successMsg ? <div className="successBanner">{successMsg}</div> : null}
           {apiError ? <div className="errorBanner">{apiError}</div> : null}
         </div>
       </header>

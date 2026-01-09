@@ -47,14 +47,23 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
   }
 
   const body = await req.json().catch(() => ({}));
+
+  const title = typeof body?.title === 'string' ? body.title.trim() : undefined;
+  const noteBody = typeof body?.body === 'string' ? body.body.trim() : undefined;
   const emoji = typeof body?.emoji === 'string' ? body.emoji.trim().slice(0, 8) : undefined;
   const color = typeof body?.color === 'string' ? body.color.trim().slice(0, 24) : undefined;
 
-  if (emoji === undefined && color === undefined) {
+  if (title !== undefined && !title) {
+    return NextResponse.json({ error: 'missing_title' }, { status: 400 });
+  }
+
+  if (title === undefined && noteBody === undefined && emoji === undefined && color === undefined) {
     return NextResponse.json({ error: 'no_changes' }, { status: 400 });
   }
 
   const $set: Record<string, unknown> = { updatedAt: new Date().toISOString() };
+  if (title !== undefined) $set.title = title;
+  if (noteBody !== undefined) $set.body = noteBody;
   if (emoji !== undefined) $set.emoji = emoji;
   if (color !== undefined) $set.color = color;
 
