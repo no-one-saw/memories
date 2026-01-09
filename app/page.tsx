@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 type NoteItem = {
   id: string;
@@ -225,7 +225,7 @@ export default function HomePage() {
     []
   );
 
-  async function load() {
+  const load = useCallback(async () => {
     const res = await fetch('/api/notes');
     if (res.status === 401) {
       window.location.href = '/login';
@@ -241,7 +241,7 @@ export default function HomePage() {
     next.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     setItems(next);
     setApiError('');
-  }
+  }, []);
 
   async function updateMeta() {
     if (!active) return;
@@ -284,8 +284,8 @@ export default function HomePage() {
   }
 
   useEffect(() => {
-    load();
-  }, []);
+    void load();
+  }, [load]);
 
   useEffect(() => {
     if (!emojiOpen) return;
@@ -458,7 +458,19 @@ export default function HomePage() {
                   </div>
                   <div className="subGrid">
                     {g.items.map((it) => (
-                      <div key={it.id} className="card" role="button" tabIndex={0} onClick={() => openView(it)}>
+                      <div
+                        key={it.id}
+                        className="card"
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => openView(it)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            openView(it);
+                          }
+                        }}
+                      >
                         <div className="cardTop" style={{ background: cardTopGradient(it.color) }} />
                         <div className="titleRow">
                           {it.emoji ? <div className="emojiBadge">{it.emoji}</div> : null}
