@@ -7,6 +7,7 @@ export default function LoginPage() {
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
   const [ok, setOk] = useState(false);
+  const [leaving, setLeaving] = useState(false);
 
   async function go() {
     setErr('');
@@ -22,16 +23,17 @@ export default function LoginPage() {
         return;
       }
       setOk(true);
+      setLeaving(true);
       setTimeout(() => {
         window.location.href = '/';
-      }, 720);
+      }, 460);
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <div className="loginShell">
+    <div className={leaving ? 'loginShell leaving' : 'loginShell'}>
       <div className="loginInner">
         <div className="navbar" role="navigation" aria-label="Login">
           <div className="navLeft" style={{ minWidth: 0, flex: '1 1 auto' }}>
@@ -74,15 +76,16 @@ export default function LoginPage() {
 
       <div
         className="overlay"
-        style={{ display: ok ? 'grid' : 'none', placeItems: 'center', background: 'rgba(11,16,32,.92)' }}
+        style={{ display: ok ? 'grid' : 'none', placeItems: 'center' }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 999, border: '1px solid rgba(255,255,255,.14)', background: 'rgba(255,255,255,.06)', boxShadow: '0 26px 80px rgba(0,0,0,.55)' }}>
-          <div style={{ width: 12, height: 12, borderRadius: 999, background: 'linear-gradient(135deg,var(--accent),var(--accent2))', animation: 'pop 800ms ease-in-out infinite' }} />
+        <div className="loginSuccessOverlay" style={{ position: 'absolute', inset: 0 }} />
+        <div
+          className="loginSuccessPill"
+          style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 999, position: 'relative' }}
+        >
+          <div className="loginSuccessDot" style={{ width: 10, height: 10, borderRadius: 999 }} />
           <div style={{ fontWeight: 500, letterSpacing: '.2px', fontSize: 14 }}>Welcome back</div>
         </div>
-        <style jsx>{`
-          @keyframes pop { 0%,100%{transform:scale(1)} 50%{transform:scale(1.25)} }
-        `}</style>
       </div>
     </div>
   );

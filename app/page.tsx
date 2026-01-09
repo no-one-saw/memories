@@ -287,6 +287,15 @@ export default function HomePage() {
   }, [load]);
 
   useEffect(() => {
+    document.body.classList.add('pageFadeIn');
+    const t = window.setTimeout(() => document.body.classList.remove('pageFadeIn'), 420);
+    return () => {
+      window.clearTimeout(t);
+      document.body.classList.remove('pageFadeIn');
+    };
+  }, []);
+
+  useEffect(() => {
     if (!emojiOpen) return;
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -412,9 +421,6 @@ export default function HomePage() {
               <div className="navTitle">
                 <h1>Nen's Memories</h1>
               </div>
-              <div className="navStatus">
-                <span className="pill">{items.length} notes</span>
-              </div>
             </div>
             <div className="navRight">
               <button className="btn primary" type="button" onClick={openCreate}>
@@ -444,7 +450,6 @@ export default function HomePage() {
                 <section key={g.key} className="daySection">
                   <div className="dayHead">
                     <div className="date">{formatDayKey(g.key)}</div>
-                    <div className="counts">{g.items.length} notes</div>
                   </div>
                   <div className="subGrid">
                     {g.items.map((it) => (
