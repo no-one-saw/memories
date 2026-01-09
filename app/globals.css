@@ -22,6 +22,7 @@ body{
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   background:var(--bg);
   color:var(--text);
+  overflow-x:hidden;
 }
 
 *{scrollbar-width: thin; scrollbar-color: rgba(168,153,132,.35) rgba(0,0,0,0)}
@@ -194,7 +195,7 @@ body{
 }
 .field textarea{resize:vertical; min-height: 180px}
 
-.main{padding: 14px 0 28px}
+.main{padding: 14px 0 18px}
 .empty{
   margin-top: 16px;
   width: min(520px, 92vw);
@@ -206,7 +207,7 @@ body{
 .empty h2{margin:0 0 8px; font-size:14px}
 .empty p{margin:0; color: var(--muted); font-size:12px; line-height:1.6}
 
-.loginShell{min-height:100vh; display:grid; place-items:center; padding: 18px 0}
+.loginShell{height:100svh; display:grid; place-items:center; padding: 18px 0; box-sizing: border-box; overflow: hidden}
 .loginInner{width:min(420px,92vw)}
 .loginCard{
   margin-top: 12px;
@@ -260,7 +261,8 @@ body{
   align-items:center;
   min-width: 0;
   max-width: 100%;
-  padding: 6px 10px;
+  height: 30px;
+  padding: 0 10px;
   border-radius: 999px;
   border:none;
   background: rgba(60,56,54,.38);
@@ -268,6 +270,8 @@ body{
 .titleText{
   display:inline-block;
   font-weight: 500;
+  font-size: 12.5px;
+  line-height: 1;
   white-space: nowrap;
   overflow: hidden;
   max-width: 100%;
@@ -277,7 +281,7 @@ body{
   mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 18px), transparent 100%);
 }
 .metaPills{display:flex; flex-wrap:wrap; gap: 6px; margin-top: 8px}
-.modalMetaPills{display:flex; flex-wrap:wrap; gap: 6px; margin-top: 6px}
+.modalMetaPills{display:flex; flex-wrap:wrap; gap: 6px; margin-top: 6px; min-width: 0}
 .metaPill{
   display:inline-flex;
   align-items:center;
@@ -290,6 +294,11 @@ body{
   font-size: 12px;
   line-height: 1;
   white-space: nowrap;
+}
+.metaPillBtn[aria-expanded="true"]{
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.25;
 }
 .metaPillBtn{
   appearance:none;
@@ -306,13 +315,14 @@ body{
   align-items:center;
   justify-content:center;
   min-height: 0;
-  padding: 6px 10px;
+  height: 30px;
+  padding: 0 10px;
   border-radius: 999px;
   border:none;
   background: rgba(60,56,54,.38);
   box-shadow: none;
   line-height: 1;
-  font-size: inherit;
+  font-size: 14px;
   flex: 0 0 auto;
 }
 
@@ -453,11 +463,11 @@ body{
   backdrop-filter: blur(10px);
   padding: 14px;
 }
-.modalHead{display:flex; align-items:flex-start; justify-content:space-between; gap: 10px; margin-bottom: 10px}
+.modalHead{display:grid; grid-template-columns: minmax(0,1fr) auto; align-items:start; gap: 10px; margin-bottom: 10px}
 .modalTitle{min-width:0}
 .modalTitle .file{font-weight: 500}
 .modalTitle .path{color: var(--muted2); font-size: 12px; margin-top: 4px}
-.modalActions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+.modalActions{display:flex; gap:8px; flex-wrap:nowrap; justify-content:flex-end; align-items:flex-start}
 .iconBtn{
   display:inline-flex;
   align-items:center;
