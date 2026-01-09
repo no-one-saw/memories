@@ -161,6 +161,7 @@ export default function HomePage() {
   const [body, setBody] = useState('');
   const [emoji, setEmoji] = useState('');
   const [color, setColor] = useState('');
+  const [editing, setEditing] = useState(false);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [apiError, setApiError] = useState<string>('');
@@ -265,6 +266,10 @@ export default function HomePage() {
       if (updated?.id) {
         setItems((prev) => prev.map((n) => (n.id === updated.id ? { ...n, ...updated } : n)));
         setActive(updated);
+        setTitle(updated.title);
+        setBody(updated.body || '');
+        setEmoji(updated.emoji || '');
+        setColor(updated.color || '');
       } else {
         await load();
       }
@@ -272,6 +277,7 @@ export default function HomePage() {
       setApiError('');
       setOpen(false);
       setSuccessMsg('Updated successfully.');
+      setEditing(false);
     } finally {
       setBusy(false);
     }
@@ -324,6 +330,7 @@ export default function HomePage() {
     setBody('');
     setEmoji('');
     setColor(colorOptions[0] || '');
+    setEditing(true);
     setEmojiOpen(false);
     setShowCreatedFull(false);
     setShowUpdatedFull(false);
@@ -341,10 +348,21 @@ export default function HomePage() {
     setBody(it.body || '');
     setEmoji(it.emoji || '');
     setColor(it.color || '');
+    setEditing(false);
     setEmojiOpen(false);
     setShowCreatedFull(false);
     setShowUpdatedFull(false);
     setOpen(true);
+  }
+
+  function cancelEdit() {
+    if (!active) return;
+    setTitle(active.title);
+    setBody(active.body || '');
+    setEmoji(active.emoji || '');
+    setColor(active.color || '');
+    setEditing(false);
+    setEmojiOpen(false);
   }
 
   async function save() {
@@ -518,6 +536,16 @@ export default function HomePage() {
                   Delete
                 </button>
               ) : null}
+              {mode !== 'create' && !editing ? (
+                <button className="iconBtn" type="button" disabled={!active || busy} onClick={() => setEditing(true)}>
+                  <svg className="btnIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                  </svg>
+                  Edit
+                </button>
+              ) : null}
+
               {mode === 'create' ? (
                 <button className="iconBtn" type="button" disabled={busy || !title.trim()} onClick={save}>
                   <svg className="btnIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -528,13 +556,29 @@ export default function HomePage() {
                   Save
                 </button>
               ) : (
-                <button className="iconBtn" type="button" disabled={busy || !active} onClick={updateMeta}>
-                  <svg className="btnIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 12a9 9 0 1 1-3-6.7" />
-                    <path d="M21 3v6h-6" />
-                  </svg>
-                  Update
-                </button>
+                <>
+                  {editing ? (
+                    <button className="iconBtn" type="button" disabled={busy || !active || !title.trim()} onClick={updateMeta}>
+                      <svg className="btnIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
+                        <path d="M17 21v-8H7v8" />
+                        <path d="M7 3v5h8" />
+                      </svg>
+                      Save changes
+                    </button>
+                  ) : null}
+                  {editing ? (
+                    <button className="iconBtn" type="button" disabled={busy || !active} onClick={cancelEdit}>
+                      <svg className="btnIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 12a9 9 0 1 1-9-9" />
+                        <path d="M3 12h9" />
+                        <path d="M3 12l3-3" />
+                        <path d="M3 12l3 3" />
+                      </svg>
+                      Cancel
+                    </button>
+                  ) : null}
+                </>
               )}
               <button className="iconBtn" type="button" onClick={() => setOpen(false)}>
                 <svg className="btnIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -546,7 +590,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {mode === 'create' || active ? (
+          {mode === 'create' || (active && editing) ? (
             <div className="metaRow">
               <div ref={emojiPickerRef} className={emojiOpen ? 'emojiPicker open' : 'emojiPicker'}>
                 <button
@@ -624,29 +668,41 @@ export default function HomePage() {
             </div>
           ) : null}
 
-          <div className="field" style={{ marginTop: 10 }}>
-            <div className="label">
-              <svg className="labelIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 7h16" />
-                <path d="M4 12h16" />
-                <path d="M4 17h10" />
-              </svg>
-              Title
+          {mode === 'create' || editing ? (
+            <>
+              <div className="field" style={{ marginTop: 10 }}>
+                <div className="label">
+                  <svg className="labelIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 7h16" />
+                    <path d="M4 12h16" />
+                    <path d="M4 17h10" />
+                  </svg>
+                  Title
+                </div>
+                <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
+              </div>
+              <div className="field" style={{ marginTop: 10 }}>
+                <div className="label">
+                  <svg className="labelIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4h16v16H4z" />
+                    <path d="M8 9h8" />
+                    <path d="M8 13h8" />
+                    <path d="M8 17h6" />
+                  </svg>
+                  Note
+                </div>
+                <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write your note..." />
+              </div>
+            </>
+          ) : (
+            <div className="noteView" style={{ marginTop: 10 }}>
+              <div className="noteViewTitle">
+                {emoji ? <span className="noteViewEmoji" aria-hidden="true">{emoji}</span> : null}
+                <span className="noteViewTitleText">{active?.title || ''}</span>
+              </div>
+              <div className="noteViewBody">{active?.body || ''}</div>
             </div>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
-          </div>
-          <div className="field" style={{ marginTop: 10 }}>
-            <div className="label">
-              <svg className="labelIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 4h16v16H4z" />
-                <path d="M8 9h8" />
-                <path d="M8 13h8" />
-                <path d="M8 17h6" />
-              </svg>
-              Note
-            </div>
-            <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write your note..." />
-          </div>
+          )}
         </div>
       </div>
     </>
