@@ -1,6 +1,6 @@
 :root{
-  --bg:#282828;
-  --panel:#3c3836;
+  --bg:#1d2021;
+  --panel:#282828;
   --panel2:#32302f;
   --muted:#a89984;
   --muted2:#928374;
@@ -34,8 +34,8 @@ body{
   gap: 12px;
   padding: 8px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(251,241,199,.14);
-  background: rgba(40,40,40,.55);
+  border: none;
+  background: rgba(40,40,40,.58);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 18px 60px rgba(0,0,0,.55);
@@ -80,8 +80,8 @@ body{
 .pill{
   font-size:11px;
   color: rgba(235,219,178,.84);
-  border:1px solid rgba(251,241,199,.14);
-  background: rgba(60,56,54,.55);
+  border:none;
+  background: rgba(60,56,54,.52);
   padding:6px 10px;
   border-radius:999px;
   white-space:nowrap;
@@ -123,22 +123,21 @@ body{
   display:inline-flex;
   align-items:center;
   gap: 8px;
-  border:1px solid var(--border);
-  background: linear-gradient(180deg, rgba(60,56,54,.75) 0%, rgba(50,48,47,.55) 100%);
+  border:none;
+  background: rgba(60,56,54,.58);
   color: var(--text);
   padding:10px 12px;
   border-radius: 12px;
   cursor:pointer;
-  box-shadow: 0 8px 20px rgba(0,0,0,.2);
-  transition: transform .08s ease, border-color .15s ease;
+  box-shadow: 0 10px 22px rgba(0,0,0,.22);
+  transition: transform .08s ease, background .15s ease;
   font-size:13px;
   user-select:none;
 }
-.btn:hover{transform: translateY(-1px); border-color: rgba(251,241,199,.18)}
+.btn:hover{transform: translateY(-1px); background: rgba(60,56,54,.70)}
 .btn:active{transform: translateY(0px)}
 .btn.primary{
-  border-color: rgba(69,133,136,.45);
-  background: linear-gradient(180deg, rgba(69,133,136,.22) 0%, rgba(177,98,134,.16) 100%);
+  background: rgba(69,133,136,.22);
 }
 
 /* Navbar buttons should be pill-shaped like the navbar */
@@ -154,8 +153,8 @@ body{
   gap: 6px;
   padding: 9px 12px;
   border-radius: 14px;
-  border:1px solid var(--border);
-  background: rgba(60,56,54,.55);
+  border:none;
+  background: rgba(60,56,54,.44);
   min-width: 240px;
 }
 .label{
@@ -188,8 +187,8 @@ body{
   margin-top: 16px;
   width: min(520px, 92vw);
   border-radius: 16px;
-  border:1px solid rgba(251,241,199,.14);
-  background: rgba(60,56,54,.45);
+  border:none;
+  background: rgba(60,56,54,.42);
   padding: 16px;
 }
 .empty h2{margin:0 0 8px; font-size:14px}
@@ -212,8 +211,8 @@ body{
 .days{margin-top: 16px; display:flex; flex-direction:column; gap: 14px}
 .daySection{
   border-radius: 18px;
-  border:1px solid rgba(251,241,199,.14);
-  background: rgba(60,56,54,.40);
+  border:none;
+  background: rgba(60,56,54,.34);
   padding: 12px;
 }
 .dayHead{display:flex; align-items:center; justify-content:space-between; gap: 12px; margin-bottom: 10px}
@@ -223,20 +222,20 @@ body{
 .subGrid{display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 260px)); gap: 10px; justify-content:start}
 .card{
   border-radius: 16px;
-  border:1px solid rgba(251,241,199,.14);
-  background: rgba(40,40,40,.32);
+  border:none;
+  background: rgba(40,40,40,.46);
   padding: 11px;
   cursor:pointer;
-  transition: transform 150ms ease, border-color 150ms ease;
+  transition: transform 150ms ease, background 150ms ease;
 }
-.card:hover{transform: translateY(-1px); border-color: rgba(69,133,136,.45)}
+.card:hover{transform: translateY(-1px); background: rgba(50,48,47,.62)}
 
 .cardTop{
   height: 10px;
   border-radius: 12px;
   margin-bottom: 10px;
-  border: 1px solid rgba(251,241,199,.12);
-  background: rgba(60,56,54,.42);
+  border: none;
+  background: rgba(60,56,54,.36);
 }
 
 .titleRow{display:flex; align-items:center; gap: 8px; margin-bottom: 6px}
@@ -247,8 +246,8 @@ body{
   max-width: 100%;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(251,241,199,.14);
-  background: rgba(60,56,54,.40);
+  border:none;
+  background: rgba(60,56,54,.38);
 }
 .titleText{
   display:inline-block;
@@ -269,8 +268,8 @@ body{
   gap: 6px;
   padding: 5px 9px;
   border-radius: 999px;
-  border: 1px solid rgba(251,241,199,.14);
-  background: rgba(60,56,54,.40);
+  border:none;
+  background: rgba(60,56,54,.38);
   color: var(--muted2);
   font-size: 12px;
   line-height: 1;
@@ -293,8 +292,8 @@ body{
   min-height: 0;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(251,241,199,.14);
-  background: rgba(60,56,54,.40);
+  border:none;
+  background: rgba(60,56,54,.38);
   box-shadow: none;
   line-height: 1;
   font-size: inherit;
@@ -304,8 +303,8 @@ body{
 .metaRow{display:flex; align-items:center; justify-content:space-between; gap: 10px; margin-bottom: 10px}
 .emojiPicker{position: relative;}
 .emojiBtn{
-  border:1px solid var(--border);
-  background: rgba(60,56,54,.55);
+  border:none;
+  background: rgba(60,56,54,.46);
   color: var(--text);
   padding: 8px 12px;
   border-radius: 999px;
@@ -322,8 +321,8 @@ body{
   border-radius: 10px;
   display:grid;
   place-items:center;
-  border: 1px solid rgba(251,241,199,.14);
-  background: rgba(60,56,54,.50);
+  border:none;
+  background: rgba(60,56,54,.48);
   box-shadow: inset 0 1px 0 rgba(251,241,199,.06);
   font-size: 16px;
 }
@@ -338,8 +337,8 @@ body{
   top: calc(100% + 8px);
   display:block;
   z-index: 50;
-  border: 1px solid rgba(251,241,199,.14);
-  background: linear-gradient(180deg, rgba(60,56,54,.96) 0%, rgba(40,40,40,.96) 100%);
+  border: none;
+  background: rgba(40,40,40,.96);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-radius: 16px;
@@ -355,7 +354,7 @@ body{
   width: 30px;
   height: 30px;
   border-radius: 12px;
-  border: 1px solid rgba(251,241,199,.14);
+  border: none;
   background: rgba(60,56,54,.55);
   color: rgba(235,219,178,.92);
   display:grid;
@@ -374,8 +373,8 @@ body{
   overflow: auto;
 }
 .emojiOpt{
-  border:1px solid rgba(251,241,199,.12);
-  background: rgba(60,56,54,.40);
+  border:none;
+  background: rgba(60,56,54,.42);
   color: var(--text);
   border-radius: 14px;
   aspect-ratio: 1 / 1;
@@ -398,8 +397,8 @@ body{
   width: 100%;
   border-radius: 12px;
   padding: 9px 10px;
-  border: 1px solid rgba(251,241,199,.14);
-  background: rgba(60,56,54,.50);
+  border:none;
+  background: rgba(60,56,54,.52);
   color: rgba(235,219,178,.90);
   cursor: pointer;
   font: inherit;
@@ -411,7 +410,7 @@ body{
   width: 22px;
   height: 22px;
   border-radius: 999px;
-  border: 1px solid rgba(251,241,199,.18);
+  border: none;
   cursor:pointer;
   box-shadow: 0 10px 20px rgba(0,0,0,.25);
 }
@@ -432,8 +431,8 @@ body{
   max-height: min(86vh, 820px);
   overflow: auto;
   border-radius: 18px;
-  border:1px solid rgba(251,241,199,.14);
-  background: rgba(40,40,40,.86);
+  border:none;
+  background: rgba(40,40,40,.88);
   box-shadow: 0 26px 80px rgba(0,0,0,.55);
   backdrop-filter: blur(10px);
   padding: 14px;
@@ -447,8 +446,8 @@ body{
   display:inline-flex;
   align-items:center;
   gap: 8px;
-  border:1px solid rgba(251,241,199,.14);
-  background: rgba(60,56,54,.55);
+  border:none;
+  background: rgba(60,56,54,.52);
   color: var(--text);
   padding: 8px 10px;
   border-radius: 14px;
@@ -461,8 +460,8 @@ body{
 .btnIcon{width: 16px; height: 16px; opacity: .9; flex: 0 0 auto}
 
 .noteView{
-  border: 1px solid rgba(251,241,199,.12);
-  background: rgba(60,56,54,.40);
+  border:none;
+  background: rgba(60,56,54,.36);
   border-radius: 16px;
   padding: 14px;
 }
@@ -473,8 +472,8 @@ body{
   display:grid;
   place-items:center;
   border-radius: 14px;
-  border: 1px solid rgba(251,241,199,.14);
-  background: rgba(60,56,54,.45);
+  border:none;
+  background: rgba(60,56,54,.42);
   font-size: 18px;
   line-height: 1;
 }
