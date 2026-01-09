@@ -163,6 +163,7 @@ export default function HomePage() {
   const [color, setColor] = useState('');
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [apiError, setApiError] = useState<string>('');
   const [showCreatedFull, setShowCreatedFull] = useState(false);
   const [showUpdatedFull, setShowUpdatedFull] = useState(false);
   const emojiPickerRef = useRef<HTMLDivElement | null>(null);
@@ -222,11 +223,16 @@ export default function HomePage() {
       window.location.href = '/login';
       return;
     }
-    if (!res.ok) return;
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      setApiError(`GET /api/notes failed (${res.status}) ${text}`);
+      return;
+    }
     const data = await res.json();
     const next = Array.isArray(data?.items) ? (data.items as NoteItem[]) : [];
     next.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     setItems(next);
+    setApiError('');
   }
 
   async function updateMeta() {
@@ -342,8 +348,13 @@ export default function HomePage() {
         window.location.href = '/login';
         return;
       }
-      if (!res.ok) return;
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        setApiError(`POST /api/notes failed (${res.status}) ${text}`);
+        return;
+      }
       setOpen(false);
+      setApiError('');
       await load();
     } finally {
       setBusy(false);
@@ -392,6 +403,7 @@ export default function HomePage() {
               </button>
             </div>
           </div>
+          {apiError ? <div className="errorBanner">{apiError}</div> : null}
         </div>
       </header>
 
