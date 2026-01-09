@@ -64,7 +64,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <button className="btn primary" type="button" disabled={busy || !pw} onClick={go} style={{ width: '100%' }}>
+          <button className="btn primary smallPillBtn" type="button" disabled={busy || !pw} onClick={go}>
             {busy ? 'Logging in…' : 'Login'}
           </button>
 
