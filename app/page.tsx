@@ -165,6 +165,7 @@ export default function HomePage() {
   const [busy, setBusy] = useState(false);
   const [showCreatedFull, setShowCreatedFull] = useState(false);
   const [showUpdatedFull, setShowUpdatedFull] = useState(false);
+  const emojiPickerRef = useRef<HTMLDivElement | null>(null);
 
   const colorOptions = useMemo(
     () => ['#6ea8ff', '#9d7bff', '#ff4fd8', '#22c55e', '#f59e0b', '#ef4444', '#14b8a6', '#ffffff'],
@@ -259,6 +260,28 @@ export default function HomePage() {
   useEffect(() => {
     load();
   }, []);
+
+  useEffect(() => {
+    if (!emojiOpen) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setEmojiOpen(false);
+    };
+
+    const onPointerDown = (e: MouseEvent) => {
+      const root = emojiPickerRef.current;
+      const t = e.target as Node | null;
+      if (!root || !t) return;
+      if (!root.contains(t)) setEmojiOpen(false);
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('mousedown', onPointerDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('mousedown', onPointerDown);
+    };
+  }, [emojiOpen]);
 
   const filtered = useMemo(() => items, [items]);
 
@@ -497,41 +520,65 @@ export default function HomePage() {
 
           {mode === 'create' || active ? (
             <div className="metaRow">
-              <div className={emojiOpen ? 'emojiPicker open' : 'emojiPicker'}>
+              <div ref={emojiPickerRef} className={emojiOpen ? 'emojiPicker open' : 'emojiPicker'}>
                 <button
                   className="emojiBtn"
                   type="button"
                   onClick={() => setEmojiOpen((v) => !v)}
                 >
-                  {emoji ? `Emoji: ${emoji}` : 'Add emoji'}
+                  <span className="emojiBtnInner">
+                    <span className={emoji ? 'emojiBtnBadge on' : 'emojiBtnBadge'} aria-hidden="true">
+                      {emoji || '🙂'}
+                    </span>
+                    <span className="emojiBtnLabel">Emoji</span>
+                  </span>
                 </button>
-                <div className="emojiMenu" onMouseDown={(e) => e.preventDefault()}>
-                  <div className="emojiGrid">
-                    {emojiOptions.map((em) => (
+                {emojiOpen ? (
+                  <div className="emojiMenu" role="dialog" aria-label="Emoji picker">
+                    <div className="emojiHeader">
+                      <div className="emojiHeaderTitle">Pick an emoji</div>
+                      <button className="emojiClose" type="button" onClick={() => setEmojiOpen(false)} aria-label="Close">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M18 6 6 18" />
+                          <path d="M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div className="emojiGrid" role="list">
+                      {emojiOptions.map((em) => (
+                        <button
+                          key={em}
+                          type="button"
+                          className={emoji === em ? 'emojiOpt selected' : 'emojiOpt'}
+                          onClick={() => {
+                            setEmoji(em);
+                            setEmojiOpen(false);
+                          }}
+                          role="listitem"
+                          aria-label={`Emoji ${em}`}
+                        >
+                          <span className="emojiGlyph" aria-hidden="true">
+                            {em}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="emojiFooter">
                       <button
-                        key={em}
                         type="button"
-                        className="emojiOpt"
+                        className="emojiClear"
                         onClick={() => {
-                          setEmoji(em);
+                          setEmoji('');
                           setEmojiOpen(false);
                         }}
                       >
-                        {em}
+                        Clear
                       </button>
-                    ))}
-                    <button
-                      type="button"
-                      className="emojiOpt"
-                      onClick={() => {
-                        setEmoji('');
-                        setEmojiOpen(false);
-                      }}
-                    >
-                      ×
-                    </button>
+                    </div>
                   </div>
-                </div>
+                ) : null}
               </div>
 
               <div className="swatches" aria-label="Cover color">
