@@ -1,12 +1,15 @@
 :root{
-  --bg:#0b0d12;
-  --panel:#121626;
-  --panel2:#0f1322;
-  --muted:#8b94ad;
-  --text:#eef1ff;
-  --border:rgba(255,255,255,.08);
-  --accent:#6ea8ff;
-  --accent2:#9d7bff;
+  --bg:#282828;
+  --panel:#3c3836;
+  --panel2:#32302f;
+  --muted:#a89984;
+  --muted2:#928374;
+  --text:#fbf1c7;
+  --border:rgba(251,241,199,.12);
+  --accent:#458588;
+  --accent2:#b16286;
+  --good:#98971a;
+  --bad:#cc241d;
   --shadow: 0 10px 30px rgba(0,0,0,.35);
   --radius:16px;
   color-scheme: dark;
@@ -17,7 +20,7 @@ html{font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, H
 body{
   margin:0;
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  background:#070810;
+  background:var(--bg);
   color:var(--text);
 }
 
@@ -31,8 +34,8 @@ body{
   gap: 12px;
   padding: 8px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(12,14,22,.55);
+  border: 1px solid rgba(251,241,199,.14);
+  background: rgba(40,40,40,.55);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 18px 60px rgba(0,0,0,.55);
@@ -51,13 +54,13 @@ body{
 .navTitle h1{
   position: relative;
   padding-left: 12px;
-  background: linear-gradient(180deg, rgba(238,241,255,.98) 0%, rgba(238,241,255,.74) 100%);
+  background: linear-gradient(180deg, rgba(251,241,199,.98) 0%, rgba(235,219,178,.78) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   text-shadow:
     0 10px 40px rgba(0,0,0,.35),
-    0 0 22px rgba(110,168,255,.10);
+    0 0 22px rgba(69,133,136,.18);
   letter-spacing: .4px;
 }
 .navTitle h1::before{
@@ -69,16 +72,16 @@ body{
   width: 7px;
   height: 7px;
   border-radius: 999px;
-  background: radial-gradient(circle at 30% 30%, rgba(110,168,255,.95), rgba(157,123,255,.55));
-  box-shadow: 0 0 0 3px rgba(110,168,255,.10);
+  background: radial-gradient(circle at 30% 30%, rgba(69,133,136,.95), rgba(177,98,134,.55));
+  box-shadow: 0 0 0 3px rgba(69,133,136,.16);
 }
 
 .navStatus{display:flex; gap: 6px; align-items:center; flex-wrap: nowrap;}
 .pill{
   font-size:11px;
-  color: rgba(238,241,255,.78);
-  border:1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.06);
+  color: rgba(235,219,178,.84);
+  border:1px solid rgba(251,241,199,.14);
+  background: rgba(60,56,54,.55);
   padding:6px 10px;
   border-radius:999px;
   white-space:nowrap;
@@ -98,9 +101,9 @@ body{
   margin-top: 10px;
   padding: 10px 12px;
   border-radius: 14px;
-  border: 1px solid rgba(140,255,190,.22);
-  background: rgba(50,220,140,.10);
-  color: rgba(210,255,232,.92);
+  border: 1px solid rgba(152,151,26,.38);
+  background: rgba(152,151,26,.14);
+  color: rgba(251,241,199,.92);
   font-size: 12.5px;
   line-height: 1.4;
 }
@@ -109,9 +112,9 @@ body{
   margin-top: 10px;
   padding: 10px 12px;
   border-radius: 14px;
-  border: 1px solid rgba(255,180,180,.28);
-  background: rgba(255,90,90,.10);
-  color: rgba(255,220,220,.92);
+  border: 1px solid rgba(204,36,29,.38);
+  background: rgba(204,36,29,.14);
+  color: rgba(251,241,199,.92);
   font-size: 12.5px;
   line-height: 1.4;
 }
@@ -121,7 +124,7 @@ body{
   align-items:center;
   gap: 8px;
   border:1px solid var(--border);
-  background: linear-gradient(180deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,.03) 100%);
+  background: linear-gradient(180deg, rgba(60,56,54,.75) 0%, rgba(50,48,47,.55) 100%);
   color: var(--text);
   padding:10px 12px;
   border-radius: 12px;
@@ -131,11 +134,11 @@ body{
   font-size:13px;
   user-select:none;
 }
-.btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.18)}
+.btn:hover{transform: translateY(-1px); border-color: rgba(251,241,199,.18)}
 .btn:active{transform: translateY(0px)}
 .btn.primary{
-  border-color: rgba(110,168,255,.35);
-  background: linear-gradient(180deg, rgba(110,168,255,.22) 0%, rgba(157,123,255,.14) 100%);
+  border-color: rgba(69,133,136,.45);
+  background: linear-gradient(180deg, rgba(69,133,136,.22) 0%, rgba(177,98,134,.16) 100%);
 }
 
 /* Navbar buttons should be pill-shaped like the navbar */
@@ -152,14 +155,14 @@ body{
   padding: 9px 12px;
   border-radius: 14px;
   border:1px solid var(--border);
-  background: rgba(255,255,255,.045);
+  background: rgba(60,56,54,.55);
   min-width: 240px;
 }
 .label{
   display:flex;
   align-items:center;
   gap: 8px;
-  color: rgba(238,241,255,.82);
+  color: rgba(235,219,178,.86);
   font-size: 12px;
   letter-spacing: .2px;
   user-select:none;
@@ -185,8 +188,8 @@ body{
   margin-top: 16px;
   width: min(520px, 92vw);
   border-radius: 16px;
-  border:1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.06);
+  border:1px solid rgba(251,241,199,.14);
+  background: rgba(60,56,54,.45);
   padding: 16px;
 }
 .empty h2{margin:0 0 8px; font-size:14px}
@@ -198,8 +201,8 @@ body{
   margin-top: 12px;
   padding: 16px;
   border-radius: 22px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: linear-gradient(180deg, rgba(18,22,38,.88) 0%, rgba(15,19,34,.72) 100%);
+  border: 1px solid rgba(251,241,199,.14);
+  background: linear-gradient(180deg, rgba(60,56,54,.88) 0%, rgba(50,48,47,.76) 100%);
   box-shadow: 0 18px 70px rgba(0,0,0,.55);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -209,8 +212,8 @@ body{
 .days{margin-top: 16px; display:flex; flex-direction:column; gap: 14px}
 .daySection{
   border-radius: 18px;
-  border:1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.05);
+  border:1px solid rgba(251,241,199,.14);
+  background: rgba(60,56,54,.40);
   padding: 12px;
 }
 .dayHead{display:flex; align-items:center; justify-content:space-between; gap: 12px; margin-bottom: 10px}
@@ -220,20 +223,20 @@ body{
 .subGrid{display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 260px)); gap: 10px; justify-content:start}
 .card{
   border-radius: 16px;
-  border:1px solid rgba(255,255,255,.12);
-  background: rgba(0,0,0,.18);
+  border:1px solid rgba(251,241,199,.14);
+  background: rgba(40,40,40,.32);
   padding: 11px;
   cursor:pointer;
   transition: transform 150ms ease, border-color 150ms ease;
 }
-.card:hover{transform: translateY(-1px); border-color: rgba(34,211,238,.35)}
+.card:hover{transform: translateY(-1px); border-color: rgba(69,133,136,.45)}
 
 .cardTop{
   height: 10px;
   border-radius: 12px;
   margin-bottom: 10px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(251,241,199,.12);
+  background: rgba(60,56,54,.42);
 }
 
 .titleRow{display:flex; align-items:center; gap: 8px; margin-bottom: 6px}
@@ -244,8 +247,8 @@ body{
   max-width: 100%;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(251,241,199,.14);
+  background: rgba(60,56,54,.40);
 }
 .titleText{
   display:inline-block;
@@ -266,8 +269,8 @@ body{
   gap: 6px;
   padding: 5px 9px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(251,241,199,.14);
+  background: rgba(60,56,54,.40);
   color: var(--muted2);
   font-size: 12px;
   line-height: 1;
@@ -280,7 +283,7 @@ body{
   cursor: pointer;
   user-select:none;
 }
-.metaPillBtn:hover{border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.06)}
+.metaPillBtn:hover{border-color: rgba(251,241,199,.20); background: rgba(60,56,54,.55)}
 .metaPillBtn:active{transform: translateY(0px)}
 .pillIcon{width: 14px; height: 14px; opacity: .85; flex: 0 0 auto}
 .emojiBadge{
@@ -290,8 +293,8 @@ body{
   min-height: 0;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(251,241,199,.14);
+  background: rgba(60,56,54,.40);
   box-shadow: none;
   line-height: 1;
   font-size: inherit;
@@ -302,7 +305,7 @@ body{
 .emojiPicker{position: relative;}
 .emojiBtn{
   border:1px solid var(--border);
-  background: rgba(255,255,255,.045);
+  background: rgba(60,56,54,.55);
   color: var(--text);
   padding: 8px 12px;
   border-radius: 999px;
@@ -319,24 +322,24 @@ body{
   border-radius: 10px;
   display:grid;
   place-items:center;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.05);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+  border: 1px solid rgba(251,241,199,.14);
+  background: rgba(60,56,54,.50);
+  box-shadow: inset 0 1px 0 rgba(251,241,199,.06);
   font-size: 16px;
 }
 .emojiBtnBadge.on{
-  border-color: rgba(110,168,255,.30);
-  background: linear-gradient(180deg, rgba(110,168,255,.16) 0%, rgba(157,123,255,.10) 100%);
+  border-color: rgba(69,133,136,.40);
+  background: linear-gradient(180deg, rgba(69,133,136,.16) 0%, rgba(177,98,134,.12) 100%);
 }
-.emojiBtnLabel{font-size: 12.5px; color: rgba(238,241,255,.86); letter-spacing: .2px}
+.emojiBtnLabel{font-size: 12.5px; color: rgba(235,219,178,.90); letter-spacing: .2px}
 .emojiMenu{
   position:absolute;
   left:0;
   top: calc(100% + 8px);
   display:block;
   z-index: 50;
-  border: 1px solid rgba(255,255,255,.12);
-  background: linear-gradient(180deg, rgba(18,22,38,.96) 0%, rgba(11,13,18,.96) 100%);
+  border: 1px solid rgba(251,241,199,.14);
+  background: linear-gradient(180deg, rgba(60,56,54,.96) 0%, rgba(40,40,40,.96) 100%);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-radius: 16px;
@@ -347,20 +350,20 @@ body{
 }
 .emojiPicker.open .emojiMenu{display:block}
 .emojiHeader{display:flex; align-items:center; justify-content:space-between; gap: 10px; padding: 10px 10px 8px}
-.emojiHeaderTitle{font-size: 12px; letter-spacing: .25px; color: rgba(238,241,255,.82)}
+.emojiHeaderTitle{font-size: 12px; letter-spacing: .25px; color: rgba(235,219,178,.86)}
 .emojiClose{
   width: 30px;
   height: 30px;
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.05);
-  color: rgba(238,241,255,.9);
+  border: 1px solid rgba(251,241,199,.14);
+  background: rgba(60,56,54,.55);
+  color: rgba(235,219,178,.92);
   display:grid;
   place-items:center;
   cursor:pointer;
 }
 .emojiClose svg{width: 16px; height: 16px; opacity: .9}
-.emojiClose:hover{border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.07)}
+.emojiClose:hover{border-color: rgba(251,241,199,.20); background: rgba(60,56,54,.70)}
 
 .emojiGrid{
   display:grid;
@@ -371,8 +374,8 @@ body{
   overflow: auto;
 }
 .emojiOpt{
-  border:1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.04);
+  border:1px solid rgba(251,241,199,.12);
+  background: rgba(60,56,54,.40);
   color: var(--text);
   border-radius: 14px;
   aspect-ratio: 1 / 1;
@@ -380,44 +383,44 @@ body{
   place-items:center;
   padding: 0;
   cursor:pointer;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+  box-shadow: inset 0 1px 0 rgba(251,241,199,.06);
 }
 .emojiGlyph{font-size: 18px; line-height: 1}
-.emojiOpt:hover{border-color: rgba(110,168,255,.35); background: rgba(110,168,255,.10)}
+.emojiOpt:hover{border-color: rgba(69,133,136,.45); background: rgba(69,133,136,.12)}
 .emojiOpt.selected{
-  border-color: rgba(110,168,255,.55);
-  background: linear-gradient(180deg, rgba(110,168,255,.20) 0%, rgba(157,123,255,.14) 100%);
+  border-color: rgba(69,133,136,.60);
+  background: linear-gradient(180deg, rgba(69,133,136,.20) 0%, rgba(177,98,134,.16) 100%);
 }
-.emojiOpt:focus-visible{outline: 2px solid rgba(110,168,255,.55); outline-offset: 2px}
+.emojiOpt:focus-visible{outline: 2px solid rgba(69,133,136,.60); outline-offset: 2px}
 
-.emojiFooter{padding: 10px; border-top: 1px solid rgba(255,255,255,.08); background: rgba(0,0,0,.14)}
+.emojiFooter{padding: 10px; border-top: 1px solid rgba(251,241,199,.10); background: rgba(40,40,40,.28)}
 .emojiClear{
   width: 100%;
   border-radius: 12px;
   padding: 9px 10px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.05);
-  color: rgba(238,241,255,.86);
+  border: 1px solid rgba(251,241,199,.14);
+  background: rgba(60,56,54,.50);
+  color: rgba(235,219,178,.90);
   cursor: pointer;
   font: inherit;
 }
-.emojiClear:hover{border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.07)}
+.emojiClear:hover{border-color: rgba(251,241,199,.20); background: rgba(60,56,54,.64)}
 
 .swatches{display:flex; align-items:center; gap: 8px; flex-wrap:wrap; justify-content:flex-end}
 .swatch{
   width: 22px;
   height: 22px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.16);
+  border: 1px solid rgba(251,241,199,.18);
   cursor:pointer;
   box-shadow: 0 10px 20px rgba(0,0,0,.25);
 }
-.swatch.selected{outline: 2px solid rgba(238,241,255,.85); outline-offset: 2px}
+.swatch.selected{outline: 2px solid rgba(251,241,199,.85); outline-offset: 2px}
 
 .overlay{
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.55);
+  background: rgba(0,0,0,.62);
   display:none;
   align-items:center;
   justify-content:center;
@@ -429,8 +432,8 @@ body{
   max-height: min(86vh, 820px);
   overflow: auto;
   border-radius: 18px;
-  border:1px solid rgba(255,255,255,.12);
-  background: rgba(11,16,32,.86);
+  border:1px solid rgba(251,241,199,.14);
+  background: rgba(40,40,40,.86);
   box-shadow: 0 26px 80px rgba(0,0,0,.55);
   backdrop-filter: blur(10px);
   padding: 14px;
@@ -444,8 +447,8 @@ body{
   display:inline-flex;
   align-items:center;
   gap: 8px;
-  border:1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.06);
+  border:1px solid rgba(251,241,199,.14);
+  background: rgba(60,56,54,.55);
   color: var(--text);
   padding: 8px 10px;
   border-radius: 14px;
@@ -453,13 +456,13 @@ body{
   font-weight: 500;
   transition: transform .08s ease, border-color .15s ease, background .15s ease;
 }
-.iconBtn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.07)}
+.iconBtn:hover{transform: translateY(-1px); border-color: rgba(251,241,199,.20); background: rgba(60,56,54,.70)}
 .iconBtn:active{transform: translateY(0px)}
 .btnIcon{width: 16px; height: 16px; opacity: .9; flex: 0 0 auto}
 
 .noteView{
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(251,241,199,.12);
+  background: rgba(60,56,54,.40);
   border-radius: 16px;
   padding: 14px;
 }
@@ -470,13 +473,13 @@ body{
   display:grid;
   place-items:center;
   border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(251,241,199,.14);
+  background: rgba(60,56,54,.45);
   font-size: 18px;
   line-height: 1;
 }
 .noteViewTitleText{font-weight: 600; letter-spacing: .2px}
-.noteViewBody{white-space: pre-wrap; line-height: 1.6; color: rgba(238,241,255,.88)}
+.noteViewBody{white-space: pre-wrap; line-height: 1.6; color: rgba(235,219,178,.88)}
 
 @media (max-width: 900px){
   .subGrid{grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))}
