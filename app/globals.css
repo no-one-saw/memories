@@ -223,12 +223,13 @@ body{
 .card{
   border-radius: 16px;
   border:none;
-  background: rgba(40,40,40,.46);
+  background: rgba(29,32,33,.70);
   padding: 11px;
   cursor:pointer;
   transition: transform 150ms ease, background 150ms ease;
+  box-shadow: inset 0 1px 0 rgba(251,241,199,.05);
 }
-.card:hover{transform: translateY(-1px); background: rgba(50,48,47,.62)}
+.card:hover{transform: translateY(-1px); background: rgba(29,32,33,.82)}
 
 .cardTop{
   height: 10px;
