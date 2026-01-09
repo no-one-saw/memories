@@ -190,13 +190,16 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 }
 .field input, .field textarea{
   width:100%;
+  min-height: 220px;
+  border:none;
   background: transparent;
-  border:0;
   color: var(--text);
   font: inherit;
   outline:none;
+  line-height: 1.6;
+  resize: none;
 }
-.field textarea{resize:vertical; min-height: 180px}
+.field textarea{resize:none; min-height: 180px}
 
 .main{padding: 14px 0 18px}
 .empty{
@@ -407,7 +410,9 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   gap: 8px;
   padding: 10px;
   max-height: 210px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
 }
 .emojiOpt{
   border:none;
