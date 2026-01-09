@@ -168,7 +168,6 @@ export default function HomePage() {
   const [successMsg, setSuccessMsg] = useState<string>('');
   const [showCreatedFull, setShowCreatedFull] = useState(false);
   const [showUpdatedFull, setShowUpdatedFull] = useState(false);
-  const emojiPickerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!successMsg) return;
@@ -294,18 +293,9 @@ export default function HomePage() {
       if (e.key === 'Escape') setEmojiOpen(false);
     };
 
-    const onPointerDown = (e: MouseEvent) => {
-      const root = emojiPickerRef.current;
-      const t = e.target as Node | null;
-      if (!root || !t) return;
-      if (!root.contains(t)) setEmojiOpen(false);
-    };
-
     window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('mousedown', onPointerDown);
     return () => {
       window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('mousedown', onPointerDown);
     };
   }, [emojiOpen]);
 
@@ -604,7 +594,7 @@ export default function HomePage() {
 
           {mode === 'create' || (active && editing) ? (
             <div className="metaRow">
-              <div ref={emojiPickerRef} className={emojiOpen ? 'emojiPicker open' : 'emojiPicker'}>
+              <div className="emojiPicker">
                 <button
                   className="emojiBtn"
                   type="button"
@@ -617,52 +607,6 @@ export default function HomePage() {
                     <span className="emojiBtnLabel">Emoji</span>
                   </span>
                 </button>
-                {emojiOpen ? (
-                  <div className="emojiMenu" role="dialog" aria-label="Emoji picker">
-                    <div className="emojiHeader">
-                      <div className="emojiHeaderTitle">Pick an emoji</div>
-                      <button className="emojiClose" type="button" onClick={() => setEmojiOpen(false)} aria-label="Close">
-                        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M18 6 6 18" />
-                          <path d="M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
-
-                    <div className="emojiGrid" role="list">
-                      {emojiOptions.map((em) => (
-                        <button
-                          key={em}
-                          type="button"
-                          className={emoji === em ? 'emojiOpt selected' : 'emojiOpt'}
-                          onClick={() => {
-                            setEmoji(em);
-                            setEmojiOpen(false);
-                          }}
-                          role="listitem"
-                          aria-label={`Emoji ${em}`}
-                        >
-                          <span className="emojiGlyph" aria-hidden="true">
-                            {em}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="emojiFooter">
-                      <button
-                        type="button"
-                        className="emojiClear"
-                        onClick={() => {
-                          setEmoji('');
-                          setEmojiOpen(false);
-                        }}
-                      >
-                        Clear
-                      </button>
-                    </div>
-                  </div>
-                ) : null}
               </div>
 
               <div className="swatches" aria-label="Cover color">
@@ -717,6 +661,63 @@ export default function HomePage() {
           )}
         </div>
       </div>
+
+      {emojiOpen ? (
+        <div
+          className="emojiOverlay open"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Emoji picker"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setEmojiOpen(false);
+          }}
+        >
+          <div className="emojiDialog">
+            <div className="emojiHeader">
+              <div className="emojiHeaderTitle">Pick an emoji</div>
+              <button className="emojiClose" type="button" onClick={() => setEmojiOpen(false)} aria-label="Close">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6 6 18" />
+                  <path d="M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="emojiGrid" role="list">
+              {emojiOptions.map((em) => (
+                <button
+                  key={em}
+                  type="button"
+                  className={emoji === em ? 'emojiOpt selected' : 'emojiOpt'}
+                  onClick={() => {
+                    setEmoji(em);
+                    setEmojiOpen(false);
+                  }}
+                  role="listitem"
+                  aria-label={`Emoji ${em}`}
+                >
+                  <span className="emojiGlyph" aria-hidden="true">
+                    {em}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <div className="emojiFooter">
+              <button
+                type="button"
+                className="emojiClear"
+                onClick={() => {
+                  setEmoji('');
+                  setEmojiOpen(false);
+                }}
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }

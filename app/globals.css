@@ -209,13 +209,14 @@ body{
 
 .loginShell{height:100svh; display:grid; place-items:center; padding: 18px 0; box-sizing: border-box; overflow: hidden}
 .loginInner{width:min(420px,92vw)}
+.loginShell .navbar{box-shadow: none}
 .loginCard{
   margin-top: 12px;
   padding: 16px;
   border-radius: 22px;
   border: none;
   background: rgba(40,40,40,.72);
-  box-shadow: 0 22px 70px rgba(0,0,0,.58), inset 0 1px 0 rgba(251,241,199,.06);
+  box-shadow: none;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
@@ -357,23 +358,25 @@ body{
   background: linear-gradient(180deg, rgba(69,133,136,.16) 0%, rgba(177,98,134,.12) 100%);
 }
 .emojiBtnLabel{font-size: 12.5px; color: rgba(235,219,178,.90); letter-spacing: .2px}
-.emojiMenu{
-  position:absolute;
-  left:0;
-  top: calc(100% + 8px);
-  display:block;
-  z-index: 50;
+
+.emojiOverlay{
+  position: fixed;
+  inset: 0;
+  display: none;
+  place-items: center;
+  padding: 18px;
+  background: rgba(0,0,0,.48);
+  z-index: 90;
+}
+.emojiOverlay.open{display: grid}
+.emojiDialog{
+  width: min(320px, calc(100vw - 28px));
+  border-radius: 16px;
   border: none;
   background: rgba(40,40,40,.96);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-radius: 16px;
-  box-shadow: 0 26px 80px rgba(0,0,0,.65);
-  min-width: 300px;
-  max-width: min(92vw, 380px);
+  box-shadow: none;
   overflow: hidden;
 }
-.emojiPicker.open .emojiMenu{display:block}
 .emojiHeader{display:flex; align-items:center; justify-content:space-between; gap: 10px; padding: 10px 10px 8px}
 .emojiHeaderTitle{font-size: 12px; letter-spacing: .25px; color: rgba(235,219,178,.86)}
 .emojiClose{
@@ -392,10 +395,10 @@ body{
 
 .emojiGrid{
   display:grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: 8px;
   padding: 10px;
-  max-height: 248px;
+  max-height: 210px;
   overflow: auto;
 }
 .emojiOpt{
