@@ -503,7 +503,7 @@ export default function HomePage() {
           if (e.target === e.currentTarget) setOpen(false);
         }}
       >
-        <div className="modal">
+        <div className={theme === 'love' ? 'modal theme-love' : 'modal'}>
           <div className="modalHead">
             <div className="modalTitle">
               <div className="file">{mode === 'create' ? 'New note' : active?.title || '-'}</div>
