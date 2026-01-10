@@ -641,18 +641,20 @@ export default function HomePage() {
                 ))}
               </div>
 
-              <div className="swatches" aria-label="Cover color">
-                {colorOptions.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    className={c === color ? 'swatch selected' : 'swatch'}
-                    style={{ background: c }}
-                    onClick={() => setColor(c)}
-                    aria-label={`Color ${c}`}
-                  />
-                ))}
-              </div>
+              {theme === 'love' ? null : (
+                <div className="swatches" aria-label="Cover color">
+                  {colorOptions.map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      className={c === color ? 'swatch selected' : 'swatch'}
+                      style={{ background: c }}
+                      onClick={() => setColor(c)}
+                      aria-label={`Color ${c}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           ) : null}
 

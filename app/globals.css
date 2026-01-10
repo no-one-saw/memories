@@ -279,17 +279,17 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 }
 
 .cardTop.theme-love{
-  background: linear-gradient(90deg, rgba(255,79,216,.78) 0%, rgba(157,123,255,.78) 55%, rgba(255,79,216,.74) 100%);
+  height: 16px;
+  background: rgba(255,79,168,.86);
 }
 .cardTop.theme-love::after{
   content:"";
   position:absolute;
   inset:0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M16.5 14.5c2.6 0 4.6 2 4.6 4.6 0 1.2-.4 2.3-1.1 3.2l-3.5 4.1-3.5-4.1c-.7-.9-1.1-2-1.1-3.2 0-2.6 2-4.6 4.6-4.6Z' fill='rgba(251,241,199,0.16)'/%3E%3Cpath d='M33 24c2.2 0 4 1.8 4 4 0 1-.3 2-1 2.8l-3 3.6-3-3.6c-.7-.8-1-1.8-1-2.8 0-2.2 1.8-4 4-4Z' fill='rgba(251,241,199,0.12)'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: 46px 46px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M10.6 9.2c2 0 3.6 1.6 3.6 3.6 0 .9-.3 1.8-.9 2.5l-2.7 3.1-2.7-3.1c-.6-.7-.9-1.6-.9-2.5 0-2 1.6-3.6 3.6-3.6Zm11 6.2c1.8 0 3.2 1.4 3.2 3.2 0 .8-.3 1.6-.8 2.2l-2.4 2.8-2.4-2.8c-.5-.6-.8-1.4-.8-2.2 0-1.8 1.4-3.2 3.2-3.2Z' fill='rgba(251,241,199,0.24)'/%3E%3C/svg%3E");
+  background-size: 28px 28px;
   background-repeat: repeat;
-  opacity: .85;
-  mix-blend-mode: overlay;
+  opacity: .95;
   pointer-events:none;
 }
 
