@@ -17,6 +17,8 @@
 @keyframes pageFadeIn{from{opacity:0}to{opacity:1}}
 @keyframes pageFadeOut{from{opacity:1}to{opacity:0}}
 @keyframes softPulse{0%,100%{transform:scale(1); opacity:.9}50%{transform:scale(1.08); opacity:1}}
+@keyframes loveParticles{0%{background-position: 10% 120%, 55% 140%, 88% 130%, 20% 160%}100%{background-position: 10% -60%, 55% -80%, 88% -70%, 20% -110%}}
+@keyframes loveGlow{0%,100%{box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 0 40px rgba(255,79,168,.14)}50%{box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 0 62px rgba(255,79,168,.22)}}
 *{box-sizing:border-box}
 html,body{min-height:100%; height:auto}
 html{font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";}
@@ -277,6 +279,8 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   box-shadow:
     0 0 0 1px rgba(255,255,255,.06),
     0 0 46px rgba(255,79,168,.16);
+  animation: loveGlow 2.8s ease-in-out infinite;
+  will-change: box-shadow;
 }
 .card.theme-love::before{
   content:"";
@@ -292,7 +296,30 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   filter: blur(.25px);
   pointer-events:none;
  }
+ .card.theme-love::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 24 24'%3E%3Cpath d='M12 21s-7.1-4.5-9.4-8.3C.9 9.9 2.3 6.7 5.4 5.8c2-.6 4 .2 5.3 1.7 1.3-1.5 3.3-2.3 5.3-1.7 3.1.9 4.5 4.1 2.8 6.9C19.1 16.5 12 21 12 21Z' fill='rgba(255,220,238,0.55)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24'%3E%3Cpath d='M12 21s-7.1-4.5-9.4-8.3C.9 9.9 2.3 6.7 5.4 5.8c2-.6 4 .2 5.3 1.7 1.3-1.5 3.3-2.3 5.3-1.7 3.1.9 4.5 4.1 2.8 6.9C19.1 16.5 12 21 12 21Z' fill='rgba(255,140,200,0.42)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24'%3E%3Cpath d='M12 21s-7.1-4.5-9.4-8.3C.9 9.9 2.3 6.7 5.4 5.8c2-.6 4 .2 5.3 1.7 1.3-1.5 3.3-2.3 5.3-1.7 3.1.9 4.5 4.1 2.8 6.9C19.1 16.5 12 21 12 21Z' fill='rgba(255,255,255,0.22)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'%3E%3Cpath d='M12 21s-7.1-4.5-9.4-8.3C.9 9.9 2.3 6.7 5.4 5.8c2-.6 4 .2 5.3 1.7 1.3-1.5 3.3-2.3 5.3-1.7 3.1.9 4.5 4.1 2.8 6.9C19.1 16.5 12 21 12 21Z' fill='rgba(255,140,200,0.30)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 18px 18px, 14px 14px, 16px 16px, 12px 12px;
+  background-position: 10% 120%, 55% 140%, 88% 130%, 20% 160%;
+  opacity: .35;
+  mix-blend-mode: screen;
+  filter: blur(.15px);
+  animation: loveParticles 6.8s linear infinite;
+  pointer-events:none;
+ }
  .card.theme-love > *{position: relative}
+
+ @media (prefers-reduced-motion: reduce){
+  .card.theme-love{animation: none}
+  .card.theme-love::after{animation: none}
+ }
 
  .card.theme-love .titlePill{background: rgba(255,79,168,.16)}
  .card.theme-love .titleText{color: rgba(251,241,199,.94)}
@@ -365,7 +392,7 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 18px), transparent 100%);
 }
 .metaPills{display:flex; flex-wrap:wrap; gap: 6px; margin-top: 8px}
-.modalMetaPills{display:flex; flex-wrap:wrap; gap: 6px; margin-top: 6px; min-width: 0}
+.modalMetaPills{display:grid; grid-auto-flow: row; gap: 6px; margin-top: 6px; min-width: 0; max-width: 100%}
 .metaPill{
   display:inline-flex;
   align-items:center;
@@ -379,6 +406,8 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   line-height: 1;
   white-space: nowrap;
 }
+.modalMetaPills .metaPill{max-width: 100%; white-space: normal; line-height: 1.25}
+.modalMetaPills .metaPillBtn{max-width: 100%}
 .metaPillBtn[aria-expanded="true"]{
   max-width: 100%;
   white-space: normal;
@@ -410,21 +439,21 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   flex: 0 0 auto;
 }
 
-.metaRow{display:flex; align-items:center; justify-content:space-between; gap: 10px; margin-bottom: 10px}
+.metaRow{display:grid; grid-template-columns: minmax(0,1fr) auto; align-items:center; column-gap: 10px; row-gap: 10px; margin-bottom: 10px}
 .emojiPicker{position: relative;}
-.metaRight{display:flex; align-items:center; justify-content:flex-end; gap: 10px; flex: 1 1 auto; min-width: 0}
-.themePicker{display:inline-flex; align-items:center; gap: 0; flex-wrap: nowrap; justify-content:flex-end; background: rgba(60,56,54,.46); border-radius: 999px; padding: 3px}
+.metaRight{display:flex; align-items:center; justify-content:flex-end; gap: 10px; flex: 0 0 auto; min-width: 0; flex-wrap: nowrap}
+.themePicker{display:inline-flex; align-items:center; gap: 0; flex-wrap: nowrap; justify-content:flex-end; background: rgba(60,56,54,.46); border-radius: 999px; padding: 2px; flex: 0 0 auto}
 .themeBtn{
   border:none;
   background: transparent;
   color: rgba(235,219,178,.92);
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 999px;
   cursor:pointer;
   font: inherit;
-  font-size: 12.5px;
+  font-size: 12px;
   line-height: 1;
-  min-height: 36px;
+  min-height: 30px;
 }
 .themeBtn:hover{background: rgba(255,255,255,.06)}
 .themeBtn.selected{background: rgba(69,133,136,.22)}
@@ -683,7 +712,7 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   .modalActions{justify-content: flex-start; width: 100%; flex-wrap: wrap}
   .iconBtn{flex: 0 0 auto; justify-content: center; padding: 8px 10px; border-radius: 999px}
 
-  .metaRow{flex-direction: column; align-items: stretch; gap: 10px}
+  .metaRow{grid-template-columns: minmax(0,1fr) auto; align-items:start}
   .emojiBtn{width: 100%; justify-content: center}
   .swatches{justify-content: flex-start; flex-wrap: wrap}
   .swatch{width: 22px; height: 22px}
