@@ -465,7 +465,7 @@ export default function HomePage() {
                     {g.items.map((it) => (
                       <div
                         key={it.id}
-                        className="card"
+                        className={it.theme === 'love' ? 'card theme-love' : 'card'}
                         role="button"
                         tabIndex={0}
                         onClick={() => openView(it)}
