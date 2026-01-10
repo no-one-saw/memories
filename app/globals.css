@@ -18,7 +18,7 @@
 @keyframes pageFadeOut{from{opacity:1}to{opacity:0}}
 @keyframes softPulse{0%,100%{transform:scale(1); opacity:.9}50%{transform:scale(1.08); opacity:1}}
 *{box-sizing:border-box}
-html,body{min-height:100%}
+html,body{min-height:100%; height:auto}
 html{font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";}
 body{
   margin:0;
@@ -26,6 +26,8 @@ body{
   background:var(--bg);
   color:var(--text);
   overflow-x:hidden;
+  overflow-y:auto;
+  min-height:100svh;
 }
 
 body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
@@ -307,20 +309,20 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 }
 
 .cardTop.theme-love{
-  height: 22px;
+  height: 10px;
   border-radius: 12px;
   background: linear-gradient(90deg, rgba(255,79,168,.98) 0%, rgba(255,120,196,.92) 52%, rgba(255,79,168,.96) 100%);
   box-shadow:
     0 0 0 1px rgba(255,255,255,.10),
-    0 10px 34px rgba(0,0,0,.28),
-    0 0 54px rgba(255,79,168,.70);
+    0 8px 26px rgba(0,0,0,.22),
+    0 0 44px rgba(255,79,168,.58);
 }
 .cardTop.theme-love::before{
   content:"";
   position:absolute;
   inset:0;
-  background: linear-gradient(180deg, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 55%);
-  opacity: .7;
+  background: linear-gradient(180deg, rgba(255,255,255,.20) 0%, rgba(255,255,255,0) 70%);
+  opacity: .65;
   pointer-events:none;
 }
 .cardTop.theme-love::after{
@@ -330,10 +332,10 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='80' viewBox='0 0 220 80'%3E%3Cpath d='M20 36c0-8 6-14 14-14 6 0 11 4 14 9 3-5 8-9 14-9 8 0 14 6 14 14 0 16-28 32-28 32S20 52 20 36Z' fill='rgba(255,255,255,0.22)'/%3E%3Cpath d='M84 22c0-6 5-11 11-11 5 0 9 3 11 7 2-4 6-7 11-7 6 0 11 5 11 11 0 12-22 25-22 25S84 34 84 22Z' fill='rgba(255,255,255,0.16)'/%3E%3Cpath d='M132 44c0-7 6-13 13-13 6 0 11 3 13 8 2-5 7-8 13-8 7 0 13 6 13 13 0 14-26 29-26 29s-26-15-26-29Z' fill='rgba(255,255,255,0.14)'/%3E%3Cpath d='M158 18c0-5 4-9 9-9 4 0 7 2 9 6 2-4 5-6 9-6 5 0 9 4 9 9 0 10-18 20-18 20s-18-10-18-20Z' fill='rgba(255,255,255,0.10)'/%3E%3C/svg%3E");
   background-repeat: repeat;
-  background-size: 240px 86px;
-  background-position: 12px 2px;
-  opacity: .95;
-  filter: blur(.25px);
+  background-size: 240px 60px;
+  background-position: 12px -8px;
+  opacity: .85;
+  filter: blur(.22px);
   pointer-events:none;
  }
 
