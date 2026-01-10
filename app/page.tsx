@@ -168,8 +168,6 @@ export default function HomePage() {
   const [busy, setBusy] = useState(false);
   const [apiError, setApiError] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<string>('');
-  const [showCreatedFull, setShowCreatedFull] = useState(false);
-  const [showUpdatedFull, setShowUpdatedFull] = useState(false);
 
   useEffect(() => {
     if (!successMsg) return;
@@ -300,8 +298,6 @@ export default function HomePage() {
     setTheme('');
     setEditing(true);
     setEmojiOpen(false);
-    setShowCreatedFull(false);
-    setShowUpdatedFull(false);
     setOpen(true);
   }
 
@@ -315,8 +311,6 @@ export default function HomePage() {
     setTheme(it.theme || '');
     setEditing(false);
     setEmojiOpen(false);
-    setShowCreatedFull(false);
-    setShowUpdatedFull(false);
     setOpen(true);
   }
 
@@ -503,42 +497,30 @@ export default function HomePage() {
           if (e.target === e.currentTarget) setOpen(false);
         }}
       >
-        <div className={theme === 'love' ? 'modal theme-love' : 'modal'}>
+          <div className={theme === 'love' ? 'modal theme-love' : 'modal'}>
           <div className="modalHead">
             <div className="modalTitle">
               <div className="file">{mode === 'create' ? 'New note' : active?.title || '-'}</div>
               <div className="modalMetaPills">
                 {mode === 'create' || !active ? null : (
                   <>
-                    <button
-                      className="metaPill metaPillBtn"
-                      type="button"
-                      aria-label={showCreatedFull ? 'Hide created date' : 'Show created date'}
-                      aria-expanded={showCreatedFull}
-                      onClick={() => setShowCreatedFull((v) => !v)}
-                    >
+                    <div className="metaPill">
                       <svg className="pillIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M8 2v4" />
                         <path d="M16 2v4" />
                         <path d="M3 10h18" />
                         <path d="M5 6h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" />
                       </svg>
-                      {showCreatedFull ? formatDateTimeFull(active.createdAt) : null}
-                    </button>
-                    <button
-                      className="metaPill metaPillBtn"
-                      type="button"
-                      aria-label={showUpdatedFull ? 'Hide updated date' : 'Show updated date'}
-                      aria-expanded={showUpdatedFull}
-                      onClick={() => setShowUpdatedFull((v) => !v)}
-                    >
+                      {formatDateTimeFull(active.createdAt)}
+                    </div>
+                    <div className="metaPill">
                       <svg className="pillIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 12a9 9 0 1 1-3-6.7" />
                         <path d="M21 3v6h-6" />
                         <path d="M12 7v5l3 2" />
                       </svg>
-                      {showUpdatedFull ? `Updated ${formatDateTimeFull(active.updatedAt)}` : null}
-                    </button>
+                      {`Updated ${formatDateTimeFull(active.updatedAt)}`}
+                    </div>
                   </>
                 )}
               </div>

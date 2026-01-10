@@ -397,16 +397,16 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   display:inline-flex;
   align-items:center;
   gap: 6px;
-  padding: 5px 9px;
+  padding: 4px 8px;
   border-radius: 999px;
   border:none;
   background: rgba(60,56,54,.38);
   color: var(--muted2);
-  font-size: 12px;
+  font-size: 11.25px;
   line-height: 1;
   white-space: nowrap;
 }
-.modalMetaPills .metaPill{max-width: 100%; white-space: normal; line-height: 1.25}
+.modalMetaPills .metaPill{max-width: 100%; white-space: normal; line-height: 1.25; pointer-events: none}
 .modalMetaPills .metaPillBtn{max-width: 100%}
 .metaPillBtn[aria-expanded="true"]{
   max-width: 100%;
@@ -422,7 +422,7 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 }
 .metaPillBtn:hover{border-color: rgba(251,241,199,.20); background: rgba(60,56,54,.55)}
 .metaPillBtn:active{transform: translateY(0px)}
-.pillIcon{width: 14px; height: 14px; opacity: .85; flex: 0 0 auto}
+.pillIcon{width: 12px; height: 12px; opacity: .85; flex: 0 0 auto}
 .emojiBadge{
   display:inline-flex;
   align-items:center;
