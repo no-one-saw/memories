@@ -423,7 +423,7 @@ export default function HomePage() {
           <div className="navbar" role="navigation" aria-label="Notes">
             <div className="navLeft">
               <div className="navTitle">
-                <h1>Nen's Memories</h1>
+                <img className="navLogo" src="/images/icon.png" alt="Nen's Memories" />
               </div>
             </div>
             <div className="navRight">
