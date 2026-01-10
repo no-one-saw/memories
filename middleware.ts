@@ -13,7 +13,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname.startsWith('/_next') || pathname.startsWith('/favicon')) {
+  if (pathname.startsWith('/_next') || pathname.startsWith('/favicon') || pathname.startsWith('/images')) {
     return NextResponse.next();
   }
 
