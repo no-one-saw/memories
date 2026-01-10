@@ -38,7 +38,7 @@ export default function LoginPage() {
         <div className="navbar" role="navigation" aria-label="Login">
           <div className="navLeft" style={{ minWidth: 0, flex: '1 1 auto' }}>
             <div className="navTitle">
-              <h1>Nen's Memories</h1>
+              <img className="navLogo" src="/images/icon.png" alt="Nen's Memories" />
             </div>
           </div>
           <div className="navRight" style={{ minWidth: 0, flex: '0 0 auto' }}>
