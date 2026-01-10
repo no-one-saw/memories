@@ -72,7 +72,7 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   padding-left: 10px;
 }
 .navTitle{display:flex; flex-direction:row; align-items:center; gap: 10px; min-width:0;}
-.navLogo{width: 124px; height: 30px; object-fit: contain; display:block; opacity: .98; filter: drop-shadow(0 0 10px rgba(0,0,0,.35))}
+.navLogo{width: 156px; height: 30px; object-fit: contain; display:block; opacity: .98; filter: drop-shadow(0 0 10px rgba(0,0,0,.35))}
 .navTitle h1{margin:0; font-size:14.5px; letter-spacing:.35px; font-weight:500}
 .navTitle h1{
   position: relative;
@@ -230,7 +230,7 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 .loginShell{height:100svh; display:grid; place-items:center; padding: 18px 0; box-sizing: border-box; overflow: hidden; opacity: 1}
 .loginShell.leaving{animation: pageFadeOut 420ms ease-in both; pointer-events: none}
 .loginInner{width:min(420px,92vw)}
-.loginShell .navLogo{width: 148px}
+.loginShell .navLogo{width: 176px}
 .loginShell .navbar{box-shadow: none}
 .loginCard{
   margin-top: 12px;
@@ -691,8 +691,8 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   }
   .navbar::-webkit-scrollbar{display:none}
 
-  .navLogo{width: 110px; height: 26px}
-  .loginShell .navLogo{width: 132px}
+  .navLogo{width: 138px; height: 26px}
+  .loginShell .navLogo{width: 160px}
 
   .navLeft,
   .navRight{
