@@ -410,10 +410,11 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 
 .metaRow{display:flex; align-items:center; justify-content:space-between; gap: 10px; margin-bottom: 10px}
 .emojiPicker{position: relative;}
-.themePicker{display:flex; gap: 8px; flex-wrap: wrap; justify-content:flex-end}
+.metaRight{display:flex; align-items:center; justify-content:flex-end; gap: 10px; flex: 1 1 auto; min-width: 0}
+.themePicker{display:inline-flex; align-items:center; gap: 0; flex-wrap: nowrap; justify-content:flex-end; background: rgba(60,56,54,.46); border-radius: 999px; padding: 3px}
 .themeBtn{
   border:none;
-  background: rgba(60,56,54,.46);
+  background: transparent;
   color: rgba(235,219,178,.92);
   padding: 8px 12px;
   border-radius: 999px;
@@ -423,8 +424,8 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   line-height: 1;
   min-height: 36px;
 }
-.themeBtn:hover{background: rgba(60,56,54,.62)}
-.themeBtn.selected{background: rgba(69,133,136,.20)}
+.themeBtn:hover{background: rgba(255,255,255,.06)}
+.themeBtn.selected{background: rgba(69,133,136,.22)}
 .emojiBtn{
   border:none;
   background: rgba(60,56,54,.46);
@@ -533,6 +534,7 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 .emojiClear:hover{border-color: rgba(251,241,199,.20); background: rgba(60,56,54,.64)}
 
 .swatches{display:flex; align-items:center; gap: 8px; flex-wrap:wrap; justify-content:flex-end}
+.swatchesPlaceholder{width: 128px; height: 22px; flex: 0 0 auto}
 .swatch{
   width: 22px;
   height: 22px;

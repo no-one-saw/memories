@@ -627,34 +627,38 @@ export default function HomePage() {
                 </button>
               </div>
 
-              <div className="themePicker" aria-label="Theme">
-                {themeOptions.map((t) => (
-                  <button
-                    key={t || 'none'}
-                    type="button"
-                    className={t === theme ? 'themeBtn selected' : 'themeBtn'}
-                    onClick={() => setTheme(t)}
-                    aria-label={t ? `Theme ${t}` : 'Theme none'}
-                  >
-                    {t ? (t === 'love' ? 'Love' : t) : 'None'}
-                  </button>
-                ))}
-              </div>
-
-              {theme === 'love' ? null : (
-                <div className="swatches" aria-label="Cover color">
-                  {colorOptions.map((c) => (
+              <div className="metaRight">
+                <div className="themePicker" aria-label="Theme">
+                  {themeOptions.map((t) => (
                     <button
-                      key={c}
+                      key={t || 'none'}
                       type="button"
-                      className={c === color ? 'swatch selected' : 'swatch'}
-                      style={{ background: c }}
-                      onClick={() => setColor(c)}
-                      aria-label={`Color ${c}`}
-                    />
+                      className={t === theme ? 'themeBtn selected' : 'themeBtn'}
+                      onClick={() => setTheme(t)}
+                      aria-label={t ? `Theme ${t}` : 'Theme none'}
+                    >
+                      {t ? (t === 'love' ? 'Love' : t) : 'None'}
+                    </button>
                   ))}
                 </div>
-              )}
+
+                {theme === 'love' ? (
+                  <div className="swatches swatchesPlaceholder" aria-hidden="true" />
+                ) : (
+                  <div className="swatches" aria-label="Cover color">
+                    {colorOptions.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        className={c === color ? 'swatch selected' : 'swatch'}
+                        style={{ background: c }}
+                        onClick={() => setColor(c)}
+                        aria-label={`Color ${c}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           ) : null}
 
