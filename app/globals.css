@@ -571,7 +571,8 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 
 .modal.theme-love{
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: rgba(54,30,40,.88);
   box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 0 70px rgba(255,79,168,.14);
 }
