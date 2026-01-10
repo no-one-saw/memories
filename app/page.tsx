@@ -8,6 +8,7 @@ type NoteItem = {
   body: string;
   emoji?: string;
   color?: string;
+  theme?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -161,6 +162,7 @@ export default function HomePage() {
   const [body, setBody] = useState('');
   const [emoji, setEmoji] = useState('');
   const [color, setColor] = useState('');
+  const [theme, setTheme] = useState('');
   const [editing, setEditing] = useState(false);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -179,6 +181,8 @@ export default function HomePage() {
     () => ['#6ea8ff', '#9d7bff', '#ff4fd8', '#22c55e', '#f59e0b', '#ef4444', '#14b8a6', '#ffffff'],
     []
   );
+
+  const themeOptions = useMemo(() => ['', 'love'], []);
 
   const emojiOptions = useMemo(
     () => [
@@ -242,46 +246,6 @@ export default function HomePage() {
     setApiError('');
   }, []);
 
-  async function updateMeta() {
-    if (!active) return;
-    setBusy(true);
-    try {
-      const res = await fetch(`/api/notes/${encodeURIComponent(active.id)}`, {
-        method: 'PATCH',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ title: title.trim(), body, emoji, color })
-      });
-      if (res.status === 401) {
-        window.location.href = '/login';
-        return;
-      }
-      if (!res.ok) {
-        const text = await res.text().catch(() => '');
-        setApiError(`PATCH /api/notes/${active.id} failed (${res.status}) ${text}`);
-        return;
-      }
-      const data = await res.json().catch(() => null);
-      const updated = data?.item as NoteItem | undefined;
-      if (updated?.id) {
-        setItems((prev) => prev.map((n) => (n.id === updated.id ? { ...n, ...updated } : n)));
-        setActive(updated);
-        setTitle(updated.title);
-        setBody(updated.body || '');
-        setEmoji(updated.emoji || '');
-        setColor(updated.color || '');
-      } else {
-        await load();
-      }
-      setEmojiOpen(false);
-      setApiError('');
-      setOpen(false);
-      setSuccessMsg('Updated successfully.');
-      setEditing(false);
-    } finally {
-      setBusy(false);
-    }
-  }
-
   useEffect(() => {
     void load();
   }, [load]);
@@ -313,13 +277,17 @@ export default function HomePage() {
   const grouped = useMemo(() => {
     const map = new Map<string, NoteItem[]>();
     for (const it of filtered) {
-      const dk = dateKeyFromIso(it.createdAt);
-      const arr = map.get(dk) || [];
-      arr.push(it);
-      map.set(dk, arr);
+      const key = dateKeyFromIso(it.createdAt);
+      const arr = map.get(key);
+      if (arr) arr.push(it);
+      else map.set(key, [it]);
     }
-    const keys = Array.from(map.keys()).sort((a, b) => b.localeCompare(a));
-    return keys.map((k) => ({ key: k, items: map.get(k) || [] }));
+    const out = Array.from(map.entries()).map(([key, its]) => ({
+      key,
+      items: its.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    }));
+    out.sort((a, b) => b.key.localeCompare(a.key));
+    return out;
   }, [filtered]);
 
   function openCreate() {
@@ -329,15 +297,12 @@ export default function HomePage() {
     setBody('');
     setEmoji('');
     setColor(colorOptions[0] || '');
+    setTheme('');
     setEditing(true);
     setEmojiOpen(false);
     setShowCreatedFull(false);
     setShowUpdatedFull(false);
     setOpen(true);
-    setTimeout(() => {
-      const el = document.getElementById('noteTitle') as HTMLInputElement | null;
-      el?.focus();
-    }, 0);
   }
 
   function openView(it: NoteItem) {
@@ -347,6 +312,7 @@ export default function HomePage() {
     setBody(it.body || '');
     setEmoji(it.emoji || '');
     setColor(it.color || '');
+    setTheme(it.theme || '');
     setEditing(false);
     setEmojiOpen(false);
     setShowCreatedFull(false);
@@ -360,12 +326,12 @@ export default function HomePage() {
     setBody(active.body || '');
     setEmoji(active.emoji || '');
     setColor(active.color || '');
+    setTheme(active.theme || '');
     setEditing(false);
     setEmojiOpen(false);
   }
 
   async function save() {
-    if (mode !== 'create') return;
     const t = title.trim();
     if (!t) return;
     setBusy(true);
@@ -373,7 +339,7 @@ export default function HomePage() {
       const res = await fetch('/api/notes', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ title: t, body, emoji, color })
+        body: JSON.stringify({ title: t, body, emoji, color, theme })
       });
       if (res.status === 401) {
         window.location.href = '/login';
@@ -388,6 +354,50 @@ export default function HomePage() {
       setApiError('');
       setSuccessMsg('Saved successfully.');
       await load();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function updateMeta() {
+    if (!active) return;
+    const t = title.trim();
+    if (!t) return;
+    setBusy(true);
+    try {
+      const res = await fetch(`/api/notes/${encodeURIComponent(active.id)}`,
+        {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ title: t, body, emoji, color, theme })
+        }
+      );
+      if (res.status === 401) {
+        window.location.href = '/login';
+        return;
+      }
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        setApiError(`PATCH /api/notes/${active.id} failed (${res.status}) ${text}`);
+        return;
+      }
+      const data = await res.json().catch(() => null);
+      const updated = data?.item as NoteItem | undefined;
+      if (updated?.id) {
+        setItems((prev) => prev.map((n) => (n.id === updated.id ? { ...n, ...updated } : n)));
+        setActive(updated);
+        setTitle(updated.title);
+        setBody(updated.body || '');
+        setEmoji(updated.emoji || '');
+        setColor(updated.color || '');
+        setTheme(updated.theme || '');
+        setEditing(false);
+        setEmojiOpen(false);
+        setApiError('');
+        setSuccessMsg('Updated successfully.');
+      } else {
+        await load();
+      }
     } finally {
       setBusy(false);
     }
@@ -466,7 +476,10 @@ export default function HomePage() {
                           }
                         }}
                       >
-                        <div className="cardTop" style={{ background: cardTopGradient(it.color) }} />
+                        <div
+                          className={it.theme === 'love' ? 'cardTop theme-love' : 'cardTop'}
+                          style={it.theme === 'love' ? undefined : { background: cardTopGradient(it.color) }}
+                        />
                         <div className="titleRow">
                           {it.emoji ? <div className="emojiBadge">{it.emoji}</div> : null}
                           <TitlePill title={it.title} />
@@ -612,6 +625,20 @@ export default function HomePage() {
                     <span className="emojiBtnLabel">Emoji</span>
                   </span>
                 </button>
+              </div>
+
+              <div className="themePicker" aria-label="Theme">
+                {themeOptions.map((t) => (
+                  <button
+                    key={t || 'none'}
+                    type="button"
+                    className={t === theme ? 'themeBtn selected' : 'themeBtn'}
+                    onClick={() => setTheme(t)}
+                    aria-label={t ? `Theme ${t}` : 'Theme none'}
+                  >
+                    {t ? (t === 'love' ? 'Love' : t) : 'None'}
+                  </button>
+                ))}
               </div>
 
               <div className="swatches" aria-label="Cover color">

@@ -52,12 +52,13 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
   const noteBody = typeof body?.body === 'string' ? body.body.trim() : undefined;
   const emoji = typeof body?.emoji === 'string' ? body.emoji.trim().slice(0, 8) : undefined;
   const color = typeof body?.color === 'string' ? body.color.trim().slice(0, 24) : undefined;
+  const theme = typeof body?.theme === 'string' ? body.theme.trim().slice(0, 16) : undefined;
 
   if (title !== undefined && !title) {
     return NextResponse.json({ error: 'missing_title' }, { status: 400 });
   }
 
-  if (title === undefined && noteBody === undefined && emoji === undefined && color === undefined) {
+  if (title === undefined && noteBody === undefined && emoji === undefined && color === undefined && theme === undefined) {
     return NextResponse.json({ error: 'no_changes' }, { status: 400 });
   }
 
@@ -66,6 +67,7 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
   if (noteBody !== undefined) $set.body = noteBody;
   if (emoji !== undefined) $set.emoji = emoji;
   if (color !== undefined) $set.color = color;
+  if (theme !== undefined) $set.theme = theme;
 
   const db = await getDb();
   const notes = db.collection('notes');
@@ -77,7 +79,7 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
 
   const updated = await notes.findOne(
     { _id },
-    { projection: { title: 1, body: 1, emoji: 1, color: 1, createdAt: 1, updatedAt: 1 } }
+    { projection: { title: 1, body: 1, emoji: 1, color: 1, theme: 1, createdAt: 1, updatedAt: 1 } }
   );
 
   return NextResponse.json({
@@ -88,6 +90,7 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
           body: (updated as any).body,
           emoji: (updated as any).emoji || '',
           color: (updated as any).color || '',
+          theme: (updated as any).theme || '',
           createdAt: (updated as any).createdAt,
           updatedAt: (updated as any).updatedAt
         }

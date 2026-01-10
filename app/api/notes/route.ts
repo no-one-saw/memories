@@ -21,7 +21,7 @@ export async function GET() {
     await notes.createIndex({ createdAt: -1 });
 
     const docs = await notes
-      .find({}, { projection: { title: 1, body: 1, emoji: 1, color: 1, createdAt: 1, updatedAt: 1 } })
+      .find({}, { projection: { title: 1, body: 1, emoji: 1, color: 1, theme: 1, createdAt: 1, updatedAt: 1 } })
       .sort({ createdAt: -1 })
       .limit(1000)
       .toArray();
@@ -32,6 +32,7 @@ export async function GET() {
       body: d.body,
       emoji: d.emoji || '',
       color: d.color || '',
+      theme: d.theme || '',
       createdAt: d.createdAt,
       updatedAt: d.updatedAt
     }));
@@ -52,6 +53,7 @@ export async function POST(req: Request) {
     const noteBody = typeof body?.body === 'string' ? body.body.trim() : '';
     const emoji = typeof body?.emoji === 'string' ? body.emoji.trim().slice(0, 8) : '';
     const color = typeof body?.color === 'string' ? body.color.trim().slice(0, 24) : '';
+    const theme = typeof body?.theme === 'string' ? body.theme.trim().slice(0, 16) : '';
 
     if (!title) {
       return NextResponse.json({ error: 'missing_title' }, { status: 400 });
@@ -65,6 +67,7 @@ export async function POST(req: Request) {
       body: noteBody,
       emoji,
       color,
+      theme,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };

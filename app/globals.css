@@ -274,6 +274,23 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   margin-bottom: 10px;
   border: none;
   background: rgba(60,56,54,.36);
+  position: relative;
+  overflow: hidden;
+}
+
+.cardTop.theme-love{
+  background: linear-gradient(90deg, rgba(255,79,216,.78) 0%, rgba(157,123,255,.78) 55%, rgba(255,79,216,.74) 100%);
+}
+.cardTop.theme-love::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M16.5 14.5c2.6 0 4.6 2 4.6 4.6 0 1.2-.4 2.3-1.1 3.2l-3.5 4.1-3.5-4.1c-.7-.9-1.1-2-1.1-3.2 0-2.6 2-4.6 4.6-4.6Z' fill='rgba(251,241,199,0.16)'/%3E%3Cpath d='M33 24c2.2 0 4 1.8 4 4 0 1-.3 2-1 2.8l-3 3.6-3-3.6c-.7-.8-1-1.8-1-2.8 0-2.2 1.8-4 4-4Z' fill='rgba(251,241,199,0.12)'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 46px 46px;
+  background-repeat: repeat;
+  opacity: .85;
+  mix-blend-mode: overlay;
+  pointer-events:none;
 }
 
 .titleRow{display:flex; align-items:center; gap: 8px; margin-bottom: 6px}
@@ -349,6 +366,21 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 
 .metaRow{display:flex; align-items:center; justify-content:space-between; gap: 10px; margin-bottom: 10px}
 .emojiPicker{position: relative;}
+.themePicker{display:flex; gap: 8px; flex-wrap: wrap; justify-content:flex-end}
+.themeBtn{
+  border:none;
+  background: rgba(60,56,54,.46);
+  color: rgba(235,219,178,.92);
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor:pointer;
+  font: inherit;
+  font-size: 12.5px;
+  line-height: 1;
+  min-height: 36px;
+}
+.themeBtn:hover{background: rgba(60,56,54,.62)}
+.themeBtn.selected{background: rgba(69,133,136,.20)}
 .emojiBtn{
   border:none;
   background: rgba(60,56,54,.46);
