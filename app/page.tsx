@@ -564,22 +564,22 @@ export default function HomePage() {
           {mode === 'create' || (active && editing) ? (
             <>
               <div className="metaRow metaRowControls">
-                <div className="emojiPicker">
-                  <button
-                    className="emojiBtn smallPillBtn"
-                    type="button"
-                    onClick={() => setEmojiOpen((v) => !v)}
-                  >
-                    <span className="emojiBtnInner">
-                      <span className={emoji ? 'emojiBtnBadge on' : 'emojiBtnBadge'} aria-hidden="true">
-                        {emoji || '🙂'}
+                <div className="metaLeftControls">
+                  <div className="emojiPicker">
+                    <button
+                      className="emojiBtn smallPillBtn"
+                      type="button"
+                      onClick={() => setEmojiOpen((v) => !v)}
+                    >
+                      <span className="emojiBtnInner">
+                        <span className={emoji ? 'emojiBtnBadge on' : 'emojiBtnBadge'} aria-hidden="true">
+                          {emoji || '🙂'}
+                        </span>
+                        <span className="emojiBtnLabel">Emoji</span>
                       </span>
-                      <span className="emojiBtnLabel">Emoji</span>
-                    </span>
-                  </button>
-                </div>
+                    </button>
+                  </div>
 
-                <div className={theme === 'love' ? 'metaRight metaRightSolo' : 'metaRight'}>
                   <div className="themePicker" aria-label="Theme">
                     {themeOptions.map((t) => (
                       <button
@@ -593,8 +593,12 @@ export default function HomePage() {
                       </button>
                     ))}
                   </div>
+                </div>
 
-                  {theme === 'love' ? null : (
+                {theme === 'love' ? (
+                  <div className="metaRight" aria-hidden="true" />
+                ) : (
+                  <div className="metaRight">
                     <div className="swatches" aria-label="Cover color">
                       {colorOptions.map((c) => (
                         <button
@@ -607,8 +611,8 @@ export default function HomePage() {
                         />
                       ))}
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </>
           ) : null}
