@@ -731,19 +731,19 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   .modalMetaPills{margin-top: 8px}
   .metaPill{font-size: 11px; padding: 5px 8px}
 
-  .modalActions{justify-content: flex-start; width: 100%; flex-wrap: wrap}
-  .iconBtn{flex: 0 0 auto; justify-content: center; padding: 8px 10px; border-radius: 999px}
+  .modalActions{justify-content: center; width: 100%; flex-wrap: wrap; gap: 8px}
+  .modalActions .btn{flex: 0 0 auto}
 
   .metaRow{grid-template-columns: minmax(0,1fr) auto; align-items:start}
   .emojiBtn{width: 100%; justify-content: center}
   .metaRowControls{grid-template-columns: 1fr; justify-content: stretch}
-  .metaLeftControls{justify-content: center; flex-wrap: wrap}
+  .metaLeftControls{justify-content: center; flex-wrap: wrap; width: 100%}
   .metaRowControls .emojiBtn{width: auto; justify-content: center}
-  .metaRowControls .metaRight{justify-content: center; flex-wrap: wrap}
+  .metaRowControls .metaRight{justify-content: center; flex-wrap: wrap; width: 100%}
   .metaRowTheme{grid-template-columns: 1fr}
   .metaRowTheme .themePicker{width: 100%; justify-content: center}
   .metaRowThemeSolo .themePicker{width: 100%; justify-content: center}
-  .swatches{justify-content: flex-start; flex-wrap: wrap}
+  .swatches{justify-content: center; flex-wrap: wrap}
   .swatch{width: 22px; height: 22px}
   .field{min-width: 0}
   .field textarea{min-height: 160px}
