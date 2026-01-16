@@ -445,6 +445,10 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 .emojiPicker{position: relative;}
 .metaRight{display:flex; align-items:center; justify-content:flex-end; gap: 10px; flex: 0 0 auto; min-width: 0; flex-wrap: nowrap}
 .themePicker{display:inline-flex; align-items:center; gap: 0; flex-wrap: nowrap; justify-content:flex-end; background: rgba(60,56,54,.46); border-radius: 999px; padding: 2px; flex: 0 0 auto}
+.metaRowTheme{grid-template-columns: auto 1fr; align-items:center}
+.metaRowTheme .themePicker{justify-content:flex-start}
+.metaRowThemeSolo{grid-template-columns: 1fr}
+.metaRowThemeSolo .themePicker{justify-content:flex-end}
 .themeBtn{
   border:none;
   background: transparent;
@@ -721,6 +725,7 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   .emojiBtn{width: 100%; justify-content: center}
   .metaRowTheme{grid-template-columns: 1fr}
   .metaRowTheme .themePicker{width: 100%; justify-content: center}
+  .metaRowThemeSolo .themePicker{width: 100%; justify-content: center}
   .swatches{justify-content: flex-start; flex-wrap: wrap}
   .swatch{width: 22px; height: 22px}
   .field{min-width: 0}

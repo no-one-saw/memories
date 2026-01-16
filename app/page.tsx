@@ -611,7 +611,11 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="metaRow metaRowTheme">
+              <div
+                className={
+                  theme === 'love' ? 'metaRow metaRowTheme metaRowThemeSolo' : 'metaRow metaRowTheme'
+                }
+              >
                 <div className="themePicker" aria-label="Theme">
                   {themeOptions.map((t) => (
                     <button
@@ -626,9 +630,7 @@ export default function HomePage() {
                   ))}
                 </div>
 
-                {theme === 'love' ? (
-                  <div className="swatches swatchesPlaceholder" aria-hidden="true" />
-                ) : (
+                {theme === 'love' ? null : (
                   <div className="swatches" aria-label="Cover color">
                     {colorOptions.map((c) => (
                       <button
