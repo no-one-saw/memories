@@ -54,7 +54,7 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   align-items:center;
   justify-content:space-between;
   gap: 12px;
-  padding: 8px 10px;
+  padding: 8px 8px;
   border-radius: 999px;
   border: none;
   background: rgba(40,40,40,.58);
@@ -67,12 +67,12 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
   display:flex;
   align-items:center;
   gap: 12px;
-  min-width: 260px;
-  flex: 1 1 320px;
-  padding-left: 10px;
+  min-width: 0;
+  flex: 1 1 auto;
+  padding-left: 0;
 }
 .navTitle{display:flex; flex-direction:row; align-items:center; gap: 10px; min-width:0;}
-.navLogo{width: 180px; height: 30px; object-fit: contain; display:block; opacity: .98; filter: drop-shadow(0 0 10px rgba(0,0,0,.35))}
+.navLogo{width: 180px; height: 30px; object-fit: cover; object-position: left center; display:block; opacity: .98; filter: drop-shadow(0 0 10px rgba(0,0,0,.35))}
 .navTitle h1{margin:0; font-size:14.5px; letter-spacing:.35px; font-weight:500}
 .navTitle h1{
   position: relative;
@@ -719,7 +719,7 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
     flex-wrap: nowrap;
   }
 
-  .navLeft{min-width: auto; flex: 1 1 auto; padding-left: 6px}
+  .navLeft{min-width: 0; flex: 1 1 auto; padding-left: 0}
   .navRight{gap: 8px; justify-content:flex-start}
   .navTitle h1{font-size: 13.5px}
   .pill{padding: 3px 8px; font-size: 10.8px}
