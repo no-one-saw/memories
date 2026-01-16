@@ -527,66 +527,35 @@ export default function HomePage() {
             </div>
             <div className="modalActions">
               {mode !== 'create' ? (
-                <button className="iconBtn" type="button" disabled={!active || busy} onClick={del}>
-                  <svg className="btnIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 6h18" />
-                    <path d="M8 6V4h8v2" />
-                    <path d="M6 6l1 16h10l1-16" />
-                    <path d="M10 11v6" />
-                    <path d="M14 11v6" />
-                  </svg>
+                <button className="btn danger smallPillBtn" type="button" disabled={!active || busy} onClick={del}>
                   Delete
                 </button>
               ) : null}
               {mode !== 'create' && !editing ? (
-                <button className="iconBtn" type="button" disabled={!active || busy} onClick={() => setEditing(true)}>
-                  <svg className="btnIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 20h9" />
-                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
-                  </svg>
+                <button className="btn smallPillBtn" type="button" disabled={!active || busy} onClick={() => setEditing(true)}>
                   Edit
                 </button>
               ) : null}
 
               {mode === 'create' ? (
-                <button className="iconBtn" type="button" disabled={busy || !title.trim()} onClick={save}>
-                  <svg className="btnIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
-                    <path d="M17 21v-8H7v8" />
-                    <path d="M7 3v5h8" />
-                  </svg>
+                <button className="btn primary smallPillBtn" type="button" disabled={busy || !title.trim()} onClick={save}>
                   Save
                 </button>
               ) : (
                 <>
                   {editing ? (
-                    <button className="iconBtn" type="button" disabled={busy || !active || !title.trim()} onClick={updateMeta}>
-                      <svg className="btnIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
-                        <path d="M17 21v-8H7v8" />
-                        <path d="M7 3v5h8" />
-                      </svg>
+                    <button className="btn primary smallPillBtn" type="button" disabled={busy || !active || !title.trim()} onClick={updateMeta}>
                       Save changes
                     </button>
                   ) : null}
                   {editing ? (
-                    <button className="iconBtn" type="button" disabled={busy || !active} onClick={cancelEdit}>
-                      <svg className="btnIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 12a9 9 0 1 1-9-9" />
-                        <path d="M3 12h9" />
-                        <path d="M3 12l3-3" />
-                        <path d="M3 12l3 3" />
-                      </svg>
+                    <button className="btn smallPillBtn" type="button" disabled={busy || !active} onClick={cancelEdit}>
                       Cancel
                     </button>
                   ) : null}
                 </>
               )}
-              <button className="iconBtn" type="button" onClick={() => setOpen(false)}>
-                <svg className="btnIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 6 6 18" />
-                  <path d="M6 6l12 12" />
-                </svg>
+              <button className="btn smallPillBtn" type="button" onClick={() => setOpen(false)}>
                 Close
               </button>
             </div>

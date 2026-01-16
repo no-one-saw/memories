@@ -160,6 +160,10 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 .btn.primary{
   background: rgba(69,133,136,.22);
 }
+.btn.danger{
+  background: rgba(204,36,29,.18);
+}
+.btn.danger:hover{background: rgba(204,36,29,.28)}
 
 /* Navbar buttons should be pill-shaped like the navbar */
  .navbar .btn{
