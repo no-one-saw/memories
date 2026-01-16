@@ -250,7 +250,7 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 .loginSuccessOverlay{background: rgba(0,0,0,.50)!important}
 .loginSuccessPill{background: rgba(40,40,40,.72)!important; border: none!important; box-shadow: none!important}
 .loginSuccessDot{background: rgba(69,133,136,.65)!important; animation: softPulse 900ms ease-in-out infinite}
-.smallPillBtn{border-radius:999px; padding:6px 10px; font-weight:500}
+.smallPillBtn{border-radius:999px; padding:4px 8px; font-weight:500; font-size: 12px; min-height: 28px; gap: 6px}
 
 .days{margin-top: 16px; display:flex; flex-direction:column; gap: 14px; align-items: flex-start}
 .daySection{
