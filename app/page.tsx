@@ -14,6 +14,17 @@ type NoteItem = {
   updatedAt: string;
 };
 
+type SpotifyPreview = {
+  id: string;
+  title: string;
+  artists: string;
+  imageUrl: string;
+  previewUrl: string;
+  openUrl: string;
+  error?: string;
+  detail?: string;
+};
+
 function dateKeyFromIso(iso: string) {
   const d = new Date(iso);
   const y = String(d.getFullYear()).padStart(4, '0');
@@ -165,6 +176,12 @@ export default function HomePage() {
   const [color, setColor] = useState('');
   const [theme, setTheme] = useState('');
   const [spotifyUrl, setSpotifyUrl] = useState('');
+  const [spotifyPreview, setSpotifyPreview] = useState<SpotifyPreview | null>(null);
+  const [spotifyPreviewLoading, setSpotifyPreviewLoading] = useState(false);
+  const [spotifyPreviewError, setSpotifyPreviewError] = useState('');
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const stopTimerRef = useRef<number | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [editing, setEditing] = useState(false);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -176,6 +193,105 @@ export default function HomePage() {
     const t = window.setTimeout(() => setSuccessMsg(''), 2400);
     return () => window.clearTimeout(t);
   }, [successMsg]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (!spotifyUrl.trim()) {
+      setSpotifyPreview(null);
+      setSpotifyPreviewError('');
+      setSpotifyPreviewLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    setSpotifyPreviewLoading(true);
+    setSpotifyPreviewError('');
+    setSpotifyPreview(null);
+
+    void fetch(`/api/spotify/preview?url=${encodeURIComponent(spotifyUrl.trim())}`, {
+      signal: controller.signal
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const text = await res.text().catch(() => '');
+          throw new Error(`Preview fetch failed (${res.status}) ${text}`);
+        }
+        return (await res.json().catch(() => null)) as SpotifyPreview | null;
+      })
+      .then((data) => {
+        if (!data || !data.id) {
+          setSpotifyPreviewError('Preview unavailable');
+          return;
+        }
+        setSpotifyPreview(data);
+        if (data.error === 'missing_spotify_credentials') {
+          setSpotifyPreviewError('Spotify preview is not configured');
+          return;
+        }
+        if (data.error === 'no_preview') {
+          setSpotifyPreviewError('No preview available for this track');
+          return;
+        }
+      })
+      .catch((e) => {
+        if ((e as any)?.name === 'AbortError') return;
+        setSpotifyPreviewError(String((e as any)?.message || e || 'Preview unavailable'));
+      })
+      .finally(() => setSpotifyPreviewLoading(false));
+
+    return () => controller.abort();
+  }, [open, spotifyUrl]);
+
+  useEffect(() => {
+    if (!open) {
+      if (stopTimerRef.current) {
+        window.clearTimeout(stopTimerRef.current);
+        stopTimerRef.current = null;
+      }
+      if (audioRef.current) {
+        try {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        } catch {}
+      }
+      setIsPlaying(false);
+    }
+  }, [open]);
+
+  const togglePreview = useCallback(async () => {
+    const audio = audioRef.current;
+    if (!audio || !spotifyPreview?.previewUrl) return;
+
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+      if (stopTimerRef.current) {
+        window.clearTimeout(stopTimerRef.current);
+        stopTimerRef.current = null;
+      }
+      return;
+    }
+
+    try {
+      audio.currentTime = 0;
+    } catch {}
+
+    try {
+      await audio.play();
+      setIsPlaying(true);
+      if (stopTimerRef.current) window.clearTimeout(stopTimerRef.current);
+      stopTimerRef.current = window.setTimeout(() => {
+        try {
+          audio.pause();
+          audio.currentTime = 0;
+        } catch {}
+        setIsPlaying(false);
+        stopTimerRef.current = null;
+      }, 15000);
+    } catch {
+      setIsPlaying(false);
+    }
+  }, [isPlaying, spotifyPreview?.previewUrl]);
 
   const colorOptions = useMemo(
     () => ['#6ea8ff', '#9d7bff', '#ff4fd8', '#22c55e', '#f59e0b', '#ef4444', '#14b8a6'],
@@ -483,17 +599,6 @@ export default function HomePage() {
                         <div className="titleRow">
                           {it.emoji ? <div className="emojiBadge">{it.emoji}</div> : null}
                           <TitlePill title={it.title} />
-                          {it.spotifyUrl ? (
-                            <a
-                              className="pill"
-                              href={it.spotifyUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              Music
-                            </a>
-                          ) : null}
                         </div>
                       </div>
                     ))}
@@ -668,6 +773,50 @@ export default function HomePage() {
                   placeholder="https://open.spotify.com/track/..."
                 />
               </div>
+
+              {spotifyUrl.trim() ? (
+                <div className="spotifyEmbed" style={{ marginTop: 10 }}>
+                  {spotifyPreviewLoading ? (
+                    <div className="spotifyEmbedStatus">Loading preview…</div>
+                  ) : spotifyPreview?.previewUrl ? (
+                    <>
+                      <div className="spotifyEmbedLeft">
+                        {spotifyPreview.imageUrl ? (
+                          <img className="spotifyEmbedCover" src={spotifyPreview.imageUrl} alt="" />
+                        ) : (
+                          <div className="spotifyEmbedCover placeholder" aria-hidden="true" />
+                        )}
+                        <div className="spotifyEmbedMeta">
+                          <div className="spotifyEmbedTitle">{spotifyPreview.title || 'Spotify'}</div>
+                          <div className="spotifyEmbedArtist">{spotifyPreview.artists || ''}</div>
+                        </div>
+                      </div>
+                      <div className="spotifyEmbedRight">
+                        <button className="btn smallPillBtn" type="button" onClick={togglePreview} disabled={!spotifyPreview.previewUrl}>
+                          {isPlaying ? 'Pause' : 'Play'}
+                        </button>
+                        {spotifyPreview.openUrl ? (
+                          <a className="btn smallPillBtn" href={spotifyPreview.openUrl} target="_blank" rel="noreferrer">
+                            Open
+                          </a>
+                        ) : null}
+                      </div>
+                      <audio ref={audioRef} src={spotifyPreview.previewUrl} preload="none" onEnded={() => setIsPlaying(false)} />
+                    </>
+                  ) : (
+                    <>
+                      <div className="spotifyEmbedStatus">{spotifyPreviewError || 'Preview unavailable'}</div>
+                      {spotifyPreview?.openUrl ? (
+                        <div className="spotifyEmbedRight" style={{ marginTop: 8 }}>
+                          <a className="btn smallPillBtn" href={spotifyPreview.openUrl} target="_blank" rel="noreferrer">
+                            Open
+                          </a>
+                        </div>
+                      ) : null}
+                    </>
+                  )}
+                </div>
+              ) : null}
             </>
           ) : (
             <div className="noteView" style={{ marginTop: 10 }}>
@@ -677,10 +826,46 @@ export default function HomePage() {
               </div>
               <div className="noteViewBody">{active?.body || ''}</div>
               {active?.spotifyUrl ? (
-                <div style={{ marginTop: 10 }}>
-                  <a className="pill" href={active.spotifyUrl} target="_blank" rel="noreferrer">
-                    Music
-                  </a>
+                <div className="spotifyEmbed" style={{ marginTop: 10 }}>
+                  {spotifyPreviewLoading ? (
+                    <div className="spotifyEmbedStatus">Loading preview…</div>
+                  ) : spotifyPreview?.previewUrl ? (
+                    <>
+                      <div className="spotifyEmbedLeft">
+                        {spotifyPreview.imageUrl ? (
+                          <img className="spotifyEmbedCover" src={spotifyPreview.imageUrl} alt="" />
+                        ) : (
+                          <div className="spotifyEmbedCover placeholder" aria-hidden="true" />
+                        )}
+                        <div className="spotifyEmbedMeta">
+                          <div className="spotifyEmbedTitle">{spotifyPreview.title || 'Spotify'}</div>
+                          <div className="spotifyEmbedArtist">{spotifyPreview.artists || ''}</div>
+                        </div>
+                      </div>
+                      <div className="spotifyEmbedRight">
+                        <button className="btn smallPillBtn" type="button" onClick={togglePreview} disabled={!spotifyPreview.previewUrl}>
+                          {isPlaying ? 'Pause' : 'Play'}
+                        </button>
+                        {spotifyPreview.openUrl ? (
+                          <a className="btn smallPillBtn" href={spotifyPreview.openUrl} target="_blank" rel="noreferrer">
+                            Open
+                          </a>
+                        ) : null}
+                      </div>
+                      <audio ref={audioRef} src={spotifyPreview.previewUrl} preload="none" onEnded={() => setIsPlaying(false)} />
+                    </>
+                  ) : (
+                    <>
+                      <div className="spotifyEmbedStatus">{spotifyPreviewError || 'Preview unavailable'}</div>
+                      {spotifyPreview?.openUrl ? (
+                        <div className="spotifyEmbedRight" style={{ marginTop: 8 }}>
+                          <a className="btn smallPillBtn" href={spotifyPreview.openUrl} target="_blank" rel="noreferrer">
+                            Open
+                          </a>
+                        </div>
+                      ) : null}
+                    </>
+                  )}
                 </div>
               ) : null}
             </div>
