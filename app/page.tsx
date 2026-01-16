@@ -9,6 +9,7 @@ type NoteItem = {
   emoji?: string;
   color?: string;
   theme?: string;
+  spotifyUrl?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -163,6 +164,7 @@ export default function HomePage() {
   const [emoji, setEmoji] = useState('');
   const [color, setColor] = useState('');
   const [theme, setTheme] = useState('');
+  const [spotifyUrl, setSpotifyUrl] = useState('');
   const [editing, setEditing] = useState(false);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -296,6 +298,7 @@ export default function HomePage() {
     setEmoji('');
     setColor(colorOptions[0] || '');
     setTheme('');
+    setSpotifyUrl('');
     setEditing(true);
     setEmojiOpen(false);
     setOpen(true);
@@ -309,6 +312,7 @@ export default function HomePage() {
     setEmoji(it.emoji || '');
     setColor(it.color || '');
     setTheme(it.theme || '');
+    setSpotifyUrl(it.spotifyUrl || '');
     setEditing(false);
     setEmojiOpen(false);
     setOpen(true);
@@ -321,6 +325,7 @@ export default function HomePage() {
     setEmoji(active.emoji || '');
     setColor(active.color || '');
     setTheme(active.theme || '');
+    setSpotifyUrl(active.spotifyUrl || '');
     setEditing(false);
     setEmojiOpen(false);
   }
@@ -333,7 +338,7 @@ export default function HomePage() {
       const res = await fetch('/api/notes', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ title: t, body, emoji, color, theme })
+        body: JSON.stringify({ title: t, body, emoji, color, theme, spotifyUrl })
       });
       if (res.status === 401) {
         window.location.href = '/login';
@@ -363,7 +368,7 @@ export default function HomePage() {
         {
           method: 'PATCH',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ title: t, body, emoji, color, theme })
+          body: JSON.stringify({ title: t, body, emoji, color, theme, spotifyUrl })
         }
       );
       if (res.status === 401) {
@@ -385,6 +390,7 @@ export default function HomePage() {
         setEmoji(updated.emoji || '');
         setColor(updated.color || '');
         setTheme(updated.theme || '');
+        setSpotifyUrl(updated.spotifyUrl || '');
         setEditing(false);
         setEmojiOpen(false);
         setApiError('');
@@ -477,6 +483,17 @@ export default function HomePage() {
                         <div className="titleRow">
                           {it.emoji ? <div className="emojiBadge">{it.emoji}</div> : null}
                           <TitlePill title={it.title} />
+                          {it.spotifyUrl ? (
+                            <a
+                              className="pill"
+                              href={it.spotifyUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              Music
+                            </a>
+                          ) : null}
                         </div>
                       </div>
                     ))}
@@ -642,6 +659,15 @@ export default function HomePage() {
                 </div>
                 <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write your note..." />
               </div>
+
+              <div className="field" style={{ marginTop: 10 }}>
+                <div className="label">Spotify link</div>
+                <input
+                  value={spotifyUrl}
+                  onChange={(e) => setSpotifyUrl(e.target.value)}
+                  placeholder="https://open.spotify.com/track/..."
+                />
+              </div>
             </>
           ) : (
             <div className="noteView" style={{ marginTop: 10 }}>
@@ -650,6 +676,13 @@ export default function HomePage() {
                 <span className="noteViewTitleText">{active?.title || ''}</span>
               </div>
               <div className="noteViewBody">{active?.body || ''}</div>
+              {active?.spotifyUrl ? (
+                <div style={{ marginTop: 10 }}>
+                  <a className="pill" href={active.spotifyUrl} target="_blank" rel="noreferrer">
+                    Music
+                  </a>
+                </div>
+              ) : null}
             </div>
           )}
         </div>

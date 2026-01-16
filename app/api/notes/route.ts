@@ -21,7 +21,7 @@ export async function GET() {
     await notes.createIndex({ createdAt: -1 });
 
     const docs = await notes
-      .find({}, { projection: { title: 1, body: 1, emoji: 1, color: 1, theme: 1, createdAt: 1, updatedAt: 1 } })
+      .find({}, { projection: { title: 1, body: 1, emoji: 1, color: 1, theme: 1, spotifyUrl: 1, createdAt: 1, updatedAt: 1 } })
       .sort({ createdAt: -1 })
       .limit(1000)
       .toArray();
@@ -33,6 +33,7 @@ export async function GET() {
       emoji: d.emoji || '',
       color: d.color || '',
       theme: d.theme || '',
+      spotifyUrl: d.spotifyUrl || '',
       createdAt: d.createdAt,
       updatedAt: d.updatedAt
     }));
@@ -54,9 +55,19 @@ export async function POST(req: Request) {
     const emoji = typeof body?.emoji === 'string' ? body.emoji.trim().slice(0, 8) : '';
     const color = typeof body?.color === 'string' ? body.color.trim().slice(0, 24) : '';
     const theme = typeof body?.theme === 'string' ? body.theme.trim().slice(0, 16) : '';
+    const spotifyUrl = typeof body?.spotifyUrl === 'string' ? body.spotifyUrl.trim().slice(0, 512) : '';
 
     if (!title) {
       return NextResponse.json({ error: 'missing_title' }, { status: 400 });
+    }
+
+    if (spotifyUrl) {
+      const okSpotify =
+        /^https?:\/\/(open\.)?spotify\.com\/.+/i.test(spotifyUrl) ||
+        /^spotify:(track|album|playlist):[A-Za-z0-9]+$/i.test(spotifyUrl);
+      if (!okSpotify) {
+        return NextResponse.json({ error: 'invalid_spotify_url' }, { status: 400 });
+      }
     }
 
     const db = await getDb();
@@ -68,6 +79,7 @@ export async function POST(req: Request) {
       emoji,
       color,
       theme,
+      spotifyUrl,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
