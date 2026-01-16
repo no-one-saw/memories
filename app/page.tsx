@@ -176,7 +176,7 @@ export default function HomePage() {
   }, [successMsg]);
 
   const colorOptions = useMemo(
-    () => ['#6ea8ff', '#9d7bff', '#ff4fd8', '#22c55e', '#f59e0b', '#ef4444', '#14b8a6', '#ffffff'],
+    () => ['#6ea8ff', '#9d7bff', '#ff4fd8', '#22c55e', '#f59e0b', '#ef4444', '#14b8a6'],
     []
   );
 
@@ -593,23 +593,25 @@ export default function HomePage() {
           </div>
 
           {mode === 'create' || (active && editing) ? (
-            <div className="metaRow">
-              <div className="emojiPicker">
-                <button
-                  className="emojiBtn"
-                  type="button"
-                  onClick={() => setEmojiOpen((v) => !v)}
-                >
-                  <span className="emojiBtnInner">
-                    <span className={emoji ? 'emojiBtnBadge on' : 'emojiBtnBadge'} aria-hidden="true">
-                      {emoji || '🙂'}
+            <>
+              <div className="metaRow">
+                <div className="emojiPicker">
+                  <button
+                    className="emojiBtn"
+                    type="button"
+                    onClick={() => setEmojiOpen((v) => !v)}
+                  >
+                    <span className="emojiBtnInner">
+                      <span className={emoji ? 'emojiBtnBadge on' : 'emojiBtnBadge'} aria-hidden="true">
+                        {emoji || '🙂'}
+                      </span>
+                      <span className="emojiBtnLabel">Emoji</span>
                     </span>
-                    <span className="emojiBtnLabel">Emoji</span>
-                  </span>
-                </button>
+                  </button>
+                </div>
               </div>
 
-              <div className="metaRight">
+              <div className="metaRow metaRowTheme">
                 <div className="themePicker" aria-label="Theme">
                   {themeOptions.map((t) => (
                     <button
@@ -641,7 +643,7 @@ export default function HomePage() {
                   </div>
                 )}
               </div>
-            </div>
+            </>
           ) : null}
 
           {mode === 'create' || editing ? (

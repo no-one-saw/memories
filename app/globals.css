@@ -719,6 +719,8 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 
   .metaRow{grid-template-columns: minmax(0,1fr) auto; align-items:start}
   .emojiBtn{width: 100%; justify-content: center}
+  .metaRowTheme{grid-template-columns: 1fr}
+  .metaRowTheme .themePicker{width: 100%; justify-content: center}
   .swatches{justify-content: flex-start; flex-wrap: wrap}
   .swatch{width: 22px; height: 22px}
   .field{min-width: 0}
