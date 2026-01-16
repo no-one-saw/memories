@@ -444,6 +444,13 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 .metaRow{display:grid; grid-template-columns: minmax(0,1fr) auto; align-items:center; column-gap: 10px; row-gap: 10px; margin-bottom: 10px}
 .emojiPicker{position: relative;}
 .metaRight{display:flex; align-items:center; justify-content:flex-end; gap: 10px; flex: 0 0 auto; min-width: 0; flex-wrap: nowrap}
+.metaRowControls{grid-template-columns: auto auto; justify-content: space-between; align-items:center}
+.metaRowControls .emojiBtn{min-height: 30px; padding: 6px 10px}
+.metaRowControls .emojiBtnInner{gap: 8px}
+.metaRowControls .emojiBtnBadge{width: 22px; height: 22px; border-radius: 9px; font-size: 15px}
+.metaRowControls .emojiBtnLabel{font-size: 12px}
+.metaRowControls .metaRight{justify-content:flex-end; gap: 8px}
+.metaRightSolo{justify-content:flex-end}
 .themePicker{display:inline-flex; align-items:center; gap: 0; flex-wrap: nowrap; justify-content:flex-end; background: rgba(60,56,54,.46); border-radius: 999px; padding: 2px; flex: 0 0 auto}
 .metaRowTheme{grid-template-columns: auto 1fr; align-items:center}
 .metaRowTheme .themePicker{justify-content:flex-start}
@@ -723,6 +730,9 @@ body.pageFadeIn{animation: pageFadeIn 360ms ease-out both}
 
   .metaRow{grid-template-columns: minmax(0,1fr) auto; align-items:start}
   .emojiBtn{width: 100%; justify-content: center}
+  .metaRowControls{grid-template-columns: 1fr; justify-content: stretch}
+  .metaRowControls .emojiBtn{width: auto; justify-content: center}
+  .metaRowControls .metaRight{justify-content: center; flex-wrap: wrap}
   .metaRowTheme{grid-template-columns: 1fr}
   .metaRowTheme .themePicker{width: 100%; justify-content: center}
   .metaRowThemeSolo .themePicker{width: 100%; justify-content: center}

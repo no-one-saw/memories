@@ -594,10 +594,10 @@ export default function HomePage() {
 
           {mode === 'create' || (active && editing) ? (
             <>
-              <div className="metaRow">
+              <div className="metaRow metaRowControls">
                 <div className="emojiPicker">
                   <button
-                    className="emojiBtn"
+                    className="emojiBtn smallPillBtn"
                     type="button"
                     onClick={() => setEmojiOpen((v) => !v)}
                   >
@@ -609,41 +609,37 @@ export default function HomePage() {
                     </span>
                   </button>
                 </div>
-              </div>
 
-              <div
-                className={
-                  theme === 'love' ? 'metaRow metaRowTheme metaRowThemeSolo' : 'metaRow metaRowTheme'
-                }
-              >
-                <div className="themePicker" aria-label="Theme">
-                  {themeOptions.map((t) => (
-                    <button
-                      key={t || 'none'}
-                      type="button"
-                      className={t === theme ? 'themeBtn selected' : 'themeBtn'}
-                      onClick={() => setTheme(t)}
-                      aria-label={t ? `Theme ${t}` : 'Theme none'}
-                    >
-                      {t ? (t === 'love' ? 'Love' : t) : 'None'}
-                    </button>
-                  ))}
-                </div>
-
-                {theme === 'love' ? null : (
-                  <div className="swatches" aria-label="Cover color">
-                    {colorOptions.map((c) => (
+                <div className={theme === 'love' ? 'metaRight metaRightSolo' : 'metaRight'}>
+                  <div className="themePicker" aria-label="Theme">
+                    {themeOptions.map((t) => (
                       <button
-                        key={c}
+                        key={t || 'none'}
                         type="button"
-                        className={c === color ? 'swatch selected' : 'swatch'}
-                        style={{ background: c }}
-                        onClick={() => setColor(c)}
-                        aria-label={`Color ${c}`}
-                      />
+                        className={(t === theme ? 'themeBtn selected' : 'themeBtn') + ' smallPillBtn'}
+                        onClick={() => setTheme(t)}
+                        aria-label={t ? `Theme ${t}` : 'Theme none'}
+                      >
+                        {t ? (t === 'love' ? 'Love' : t) : 'None'}
+                      </button>
                     ))}
                   </div>
-                )}
+
+                  {theme === 'love' ? null : (
+                    <div className="swatches" aria-label="Cover color">
+                      {colorOptions.map((c) => (
+                        <button
+                          key={c}
+                          type="button"
+                          className={c === color ? 'swatch selected' : 'swatch'}
+                          style={{ background: c }}
+                          onClick={() => setColor(c)}
+                          aria-label={`Color ${c}`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </>
           ) : null}
