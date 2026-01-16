@@ -212,13 +212,22 @@ export default function HomePage() {
       signal: controller.signal
     })
       .then(async (res) => {
+        const data = (await res.json().catch(() => null)) as SpotifyPreview | null;
         if (!res.ok) {
-          const text = await res.text().catch(() => '');
-          throw new Error(`Preview fetch failed (${res.status}) ${text}`);
+          const err = (data as any)?.error;
+          if (err === 'missing_spotify_credentials') {
+            setSpotifyPreviewError('Spotify preview is not configured');
+            setSpotifyPreview(null);
+            return null;
+          }
+          setSpotifyPreviewError('Preview unavailable');
+          setSpotifyPreview(null);
+          return null;
         }
-        return (await res.json().catch(() => null)) as SpotifyPreview | null;
+        return data;
       })
       .then((data) => {
+        if (!data) return;
         if (!data || !data.id) {
           setSpotifyPreviewError('Preview unavailable');
           return;
