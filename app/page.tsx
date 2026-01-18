@@ -14,6 +14,17 @@ type NoteItem = {
   updatedAt: string;
 };
 
+type SpotifyTrackResult = {
+  id: string;
+  name: string;
+  artists: string[];
+  album: string;
+  image: string;
+  durationMs: number;
+  externalUrl: string;
+  uri: string;
+};
+
 function spotifyEmbedSrc(input: string) {
   const s = (input || '').trim();
   if (!s) return '';
@@ -183,6 +194,10 @@ export default function HomePage() {
   const [color, setColor] = useState('');
   const [theme, setTheme] = useState('');
   const [spotifyUrl, setSpotifyUrl] = useState('');
+  const [spotifyQuery, setSpotifyQuery] = useState('');
+  const [spotifyResults, setSpotifyResults] = useState<SpotifyTrackResult[]>([]);
+  const [spotifySearching, setSpotifySearching] = useState(false);
+  const [spotifySearchError, setSpotifySearchError] = useState('');
   const [editing, setEditing] = useState(false);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -232,6 +247,55 @@ export default function HomePage() {
     const t = window.setTimeout(() => setSuccessMsg(''), 2400);
     return () => window.clearTimeout(t);
   }, [successMsg]);
+
+  useEffect(() => {
+    const spotifySearchEnabled = process.env.NEXT_PUBLIC_SPOTIFY_SEARCH_ENABLED === '1';
+    if (!spotifySearchEnabled) {
+      setSpotifyResults([]);
+      setSpotifySearchError('');
+      setSpotifySearching(false);
+      return;
+    }
+
+    const q = spotifyQuery.trim();
+    if (q.length < 2) {
+      setSpotifyResults([]);
+      setSpotifySearchError('');
+      setSpotifySearching(false);
+      return;
+    }
+
+    const ctrl = new AbortController();
+    const t = window.setTimeout(async () => {
+      setSpotifySearching(true);
+      setSpotifySearchError('');
+      try {
+        const res = await fetch(`/api/spotify/search?q=${encodeURIComponent(q)}`, { signal: ctrl.signal });
+        if (res.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+        if (!res.ok) {
+          setSpotifyResults([]);
+          setSpotifySearchError('Spotify search failed.');
+          return;
+        }
+        const data = (await res.json()) as { tracks?: SpotifyTrackResult[] };
+        setSpotifyResults(Array.isArray(data?.tracks) ? data.tracks : []);
+      } catch (e: any) {
+        if (e?.name === 'AbortError') return;
+        setSpotifyResults([]);
+        setSpotifySearchError('Spotify search failed.');
+      } finally {
+        setSpotifySearching(false);
+      }
+    }, 260);
+
+    return () => {
+      ctrl.abort();
+      window.clearTimeout(t);
+    };
+  }, [spotifyQuery]);
 
   const colorOptions = useMemo(
     () => ['#6ea8ff', '#9d7bff', '#ff4fd8', '#22c55e', '#f59e0b', '#ef4444', '#14b8a6'],
@@ -377,6 +441,10 @@ export default function HomePage() {
     setColor(colorOptions[0] || '');
     setTheme('');
     setSpotifyUrl('');
+    setSpotifyQuery('');
+    setSpotifyResults([]);
+    setSpotifySearching(false);
+    setSpotifySearchError('');
     setEditing(true);
     setEmojiOpen(false);
     setOpen(true);
@@ -385,15 +453,36 @@ export default function HomePage() {
   function openView(it: NoteItem) {
     setMode('view');
     setActive(it);
-    setTitle(it.title);
+    setTitle(it.title || '');
     setBody(it.body || '');
     setEmoji(it.emoji || '');
     setColor(it.color || '');
     setTheme(it.theme || '');
     setSpotifyUrl(it.spotifyUrl || '');
+    setSpotifyQuery('');
+    setSpotifyResults([]);
+    setSpotifySearching(false);
+    setSpotifySearchError('');
     setEditing(false);
     setEmojiOpen(false);
     setOpen(true);
+  }
+
+  function openEdit() {
+    if (!active) return;
+    setMode('view');
+    setTitle(active.title || '');
+    setBody(active.body || '');
+    setEmoji(active.emoji || '');
+    setColor(active.color || '');
+    setTheme(active.theme || '');
+    setSpotifyUrl(active.spotifyUrl || '');
+    setSpotifyQuery('');
+    setSpotifyResults([]);
+    setSpotifySearching(false);
+    setSpotifySearchError('');
+    setEditing(false);
+    setEmojiOpen(false);
   }
 
   function cancelEdit() {
@@ -747,6 +836,65 @@ export default function HomePage() {
                   placeholder="https://open.spotify.com/track/..."
                 />
               </div>
+
+              {process.env.NEXT_PUBLIC_SPOTIFY_SEARCH_ENABLED === '1' ? (
+                <>
+                  <div className="field" style={{ marginTop: 10 }}>
+                    <div className="label">Search Spotify</div>
+                    <input
+                      value={spotifyQuery}
+                      onChange={(e) => setSpotifyQuery(e.target.value)}
+                      placeholder="Search a song..."
+                    />
+                  </div>
+
+                  {spotifySearching ? (
+                    <div style={{ marginTop: 8, color: 'var(--muted)', fontSize: 12 }}>Searching…</div>
+                  ) : null}
+
+                  {spotifySearchError ? (
+                    <div style={{ marginTop: 8, color: '#ffb4b4', fontSize: 12 }}>{spotifySearchError}</div>
+                  ) : null}
+
+                  {spotifyResults.length ? (
+                    <div style={{ marginTop: 10, display: 'grid', gap: 8 }}>
+                      {spotifyResults.slice(0, 10).map((t) => (
+                        <button
+                          key={t.id}
+                          type="button"
+                          className="btn"
+                          style={{ justifyContent: 'flex-start', textAlign: 'left', gap: 10, padding: 10, borderRadius: 14 }}
+                          onClick={() => {
+                            setSpotifyUrl(t.uri || t.externalUrl);
+                            setSpotifyQuery('');
+                            setSpotifyResults([]);
+                            setSpotifySearchError('');
+                          }}
+                        >
+                          {t.image ? (
+                            <img
+                              src={t.image}
+                              alt=""
+                              width={36}
+                              height={36}
+                              style={{ borderRadius: 10, objectFit: 'cover', flex: '0 0 auto' }}
+                            />
+                          ) : (
+                            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(60,56,54,.44)', flex: '0 0 auto' }} />
+                          )}
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontWeight: 600, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.name}</div>
+                            <div style={{ color: 'var(--muted)', fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {(t.artists || []).join(', ')}
+                              {t.album ? ` · ${t.album}` : ''}
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </>
+              ) : null}
 
               {spotifyUrl.trim() && spotifyEmbedSrc(spotifyUrl) ? (
                 <div className="spotifyIframe" style={{ marginTop: 10 }}>
