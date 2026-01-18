@@ -21,6 +21,8 @@ export function middleware(req: NextRequest) {
     const expected = process.env.MV_CLIENT_SECRET || '';
     const headerApproved = Boolean(expected) && headerSecret === expected;
 
+    const shouldSetClientCookie = !approved && headerApproved;
+
     if (!approved && !headerApproved) {
       if (pathname.startsWith('/api')) {
         return NextResponse.json({ error: 'mobile_client_required' }, { status: 403 });
@@ -30,8 +32,18 @@ export function middleware(req: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    if (!approved && headerApproved) {
-      const res = NextResponse.next();
+    // If the client is approved via header, we set a persistent cookie on the final response
+    // (we must not early-return here, otherwise we skip auth redirects).
+    if (shouldSetClientCookie) {
+      // store it on the request object via a symbol-less convention
+      (req as any).__mv_set_client_cookie = true;
+    }
+  }
+
+  // API routes handle auth themselves and should not be redirected.
+  if (pathname.startsWith('/api')) {
+    const res = NextResponse.next();
+    if ((req as any).__mv_set_client_cookie) {
       res.cookies.set('mv_client', '1', {
         httpOnly: true,
         sameSite: 'lax',
@@ -39,31 +51,66 @@ export function middleware(req: NextRequest) {
         secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 24 * 365
       });
-      return res;
     }
-  }
-
-  // API routes handle auth themselves and should not be redirected.
-  if (pathname.startsWith('/api')) {
-    return NextResponse.next();
+    return res;
   }
 
   if (pathname.startsWith('/blocked')) {
-    return NextResponse.next();
+    const res = NextResponse.next();
+    if ((req as any).__mv_set_client_cookie) {
+      res.cookies.set('mv_client', '1', {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 24 * 365
+      });
+    }
+    return res;
   }
 
   if (pathname.startsWith('/login')) {
-    return NextResponse.next();
+    const res = NextResponse.next();
+    if ((req as any).__mv_set_client_cookie) {
+      res.cookies.set('mv_client', '1', {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 24 * 365
+      });
+    }
+    return res;
   }
 
   const sid = req.cookies.get('mv_session')?.value;
   if (!sid) {
     const url = req.nextUrl.clone();
     url.pathname = '/login';
-    return NextResponse.redirect(url);
+    const res = NextResponse.redirect(url);
+    if ((req as any).__mv_set_client_cookie) {
+      res.cookies.set('mv_client', '1', {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 24 * 365
+      });
+    }
+    return res;
   }
 
-  return NextResponse.next();
+  const res = NextResponse.next();
+  if ((req as any).__mv_set_client_cookie) {
+    res.cookies.set('mv_client', '1', {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 365
+    });
+  }
+  return res;
 }
 
 export const config = {
