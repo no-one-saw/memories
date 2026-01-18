@@ -278,6 +278,28 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
+    const onBeforeUnload = () => {
+      try {
+        if (typeof navigator !== 'undefined' && 'sendBeacon' in navigator) {
+          navigator.sendBeacon('/api/logout');
+          return;
+        }
+      } catch {
+        // ignore
+      }
+
+      try {
+        void fetch('/api/logout', { method: 'POST', keepalive: true });
+      } catch {
+        // ignore
+      }
+    };
+
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, []);
+
+  useEffect(() => {
     if (!emojiOpen) return;
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -440,6 +462,15 @@ export default function HomePage() {
     }
   }
 
+  async function logout() {
+    setBusy(true);
+    try {
+      await fetch('/api/logout', { method: 'POST' });
+    } finally {
+      window.location.href = '/login';
+    }
+  }
+
   return (
     <>
       <header>
@@ -457,6 +488,9 @@ export default function HomePage() {
                   <path d="M5 12h14" />
                 </svg>
                 New Note
+              </button>
+              <button className="btn" type="button" onClick={logout} disabled={busy}>
+                Logout
               </button>
             </div>
           </div>
