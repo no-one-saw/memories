@@ -8,8 +8,8 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const publicPaths = ['/login', '/blocked'];
-  const publicApiPrefixes = ['/api/login', '/api/health'];
+  const publicPaths = ['/blocked'];
+  const publicApiPrefixes = ['/api/health'];
 
   const isPublicPath = publicPaths.some((p) => pathname === p || pathname.startsWith(p + '/'));
   const isPublicApi = publicApiPrefixes.some((p) => pathname === p || pathname.startsWith(p + '/'));
@@ -45,10 +45,6 @@ export function middleware(req: NextRequest) {
 
   // API routes handle auth themselves and should not be redirected.
   if (pathname.startsWith('/api')) {
-    return NextResponse.next();
-  }
-
-  if (pathname.startsWith('/login')) {
     return NextResponse.next();
   }
 
