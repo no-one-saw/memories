@@ -48,6 +48,14 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  if (pathname.startsWith('/blocked')) {
+    return NextResponse.next();
+  }
+
+  if (pathname.startsWith('/login')) {
+    return NextResponse.next();
+  }
+
   const sid = req.cookies.get('mv_session')?.value;
   if (!sid) {
     const url = req.nextUrl.clone();
