@@ -190,6 +190,44 @@ export default function HomePage() {
   const [successMsg, setSuccessMsg] = useState<string>('');
 
   useEffect(() => {
+    const getNavType = () => {
+      try {
+        const entries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+        return entries?.[0]?.type;
+      } catch {
+        return undefined;
+      }
+    };
+
+    const navType = getNavType();
+    const ref = typeof document !== 'undefined' ? document.referrer : '';
+    const sameOrigin = (() => {
+      if (!ref) return false;
+      try {
+        return new URL(ref).origin === window.location.origin;
+      } catch {
+        return false;
+      }
+    })();
+
+    const shouldForceLogin = navType === 'reload' || (navType === 'navigate' && !sameOrigin);
+    if (!shouldForceLogin) return;
+
+    let canceled = false;
+    (async () => {
+      try {
+        await fetch('/api/logout', { method: 'POST' });
+      } finally {
+        if (!canceled) window.location.replace('/login');
+      }
+    })();
+
+    return () => {
+      canceled = true;
+    };
+  }, []);
+
+  useEffect(() => {
     if (!successMsg) return;
     const t = window.setTimeout(() => setSuccessMsg(''), 2400);
     return () => window.clearTimeout(t);
